@@ -16,3 +16,7 @@ application/logs/*
 !application/logs/.htaccess
 /vendor/
 /sessions/*
+
+# Ignoro para no subur cambios con datos 
+application/config/config.php
+application/config/database.php
