@@ -6,8 +6,7 @@ class Personas extends CI_Controller {
 	function __construct() {
 	  parent::__construct();
 	  date_default_timezone_set('America/Argentina/Buenos_Aires');
-	  $this->load->model('Persona_model');
-	  $this->load->model('Empresa_model');
+	  $this->load->model(array('Empresa_model', 'Persona_model','Motivos_baja_model'));
     $this->load->library('upload');
     if ( empty( $this->session->nombre_usuario ) ) {
 	  	redirect('Login');
@@ -18,7 +17,8 @@ class Personas extends CI_Controller {
 		$title['title'] = 'Personas';
 		$data = array(
 				'personas' => $this->Persona_model->getData('activo', true),
-				'empresas' => $this->Empresa_model->get('tipo', 1)
+				'empresas' => $this->Empresa_model->get('tipo', 1),
+				'motivos_baja' => $this->Motivos_baja_model->get('tipo', 1)
 		);
 		$this->load->view('layout/header',$title);
 		$this->load->view('layout/nav');
@@ -181,6 +181,32 @@ class Personas extends CI_Controller {
 			echo 'success';
 		}
 	}
+
+	function destroy() {
+    $this->form_validation->set_rules('motivo_baja_id', 'Motivo', 'required');
+    $this->form_validation->set_rules('persona_id', 'Persona', 'required');
+    $this->form_validation->set_rules('detalle', 'Detalle', 'required|min_length[5]');
+    if ($this->form_validation->run() == FALSE) {
+      echo json_encode( array( 'status' => 'error', 'msg'  => 'Faltan datos') );
+    } else {
+      $entry = array(
+	      'persona_id' => $this->input->post('persona_id'),
+	      'motivo_baja_id' => $this->input->post('motivo_baja_id'),
+	      'detalle' => $this->input->post('detalle'),
+	      'fecha_baja' => $this->input->post('fecha_baja'),
+	      'user_created_id' => $this->session->userdata('id'),
+	      'user_last_updated_id' => $this->session->userdata('id'),
+	      'created_at' => date('Y-m-d H:i:s'),
+				'updated_at' => date('Y-m-d H:i:s')
+      );
+      $entry = $this->security->xss_clean($entry);
+      if ($this->Persona_model->destroy($entry)) {
+        echo json_encode( array( 'status' => 'success', 'msg'  => 'Persona dada de baja') );
+      } else {
+        echo json_encode( array( 'status' => 'error', 'msg'  => 'Ocurrio un error al eliminar el registro') );
+      }
+    } // end if form_validation
+  } // end destroy
 
 
 }
