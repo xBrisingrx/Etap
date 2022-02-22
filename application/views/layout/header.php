@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<!-- Title -->
-		<title><?php echo $title;?> | Sistema de control documentario</title>
+		<title> <?php echo ( isset($title) ) ? "| $title " : '';?>Sistema de control documentario</title>
 
 		<!-- Required Meta Tags Always Come First -->
 		<meta charset="utf-8">
