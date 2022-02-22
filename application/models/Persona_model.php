@@ -52,7 +52,8 @@ class Persona_model extends CI_Model {
     // Dejamos la persona inactiva y registramos el moviniento en tabla personas_inactivas
     $entry = $this->db->get_where('personas', array('id' => $persona['persona_id']))->row();
     $entry->activo = false;
-    $entry->update_at = date('Y-m-d H:i:s');
+    $entry->updated_at = date('Y-m-d H:i:s');
+    $entry->user_last_updated_id = $this->session->userdata('id');
     $this->db->where('id', $persona['persona_id']);
     return ( $this->db->update('personas', $entry) ) && ( $this->db->insert('personas_inactivas', $persona) );
   }
