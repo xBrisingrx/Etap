@@ -134,11 +134,6 @@ class Usuarios extends CI_Controller {
 
 		$usuario = $this->Usuario_model->nombre_usuario_ocupado($username);
 		if ( isset($usuario) && ( $usuario->id != $id ) ) {
-			$cosito = array(
-				'1' => ( $usuario->id != $id ) ? 'si' : 'no',
-				'2' => isset($usuario),
-				'3' => $usuario->id
-			);
 			$this->form_validation->set_message('nombre_usuario_ocupado', "El nombre de usuario ya pertenece a otro usuario"  );
 	    return FALSE;
 		} else {
