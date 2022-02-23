@@ -2,6 +2,8 @@
 
 class Persona_model extends CI_Model {
 
+  protected $table = 'personas';
+
   function __construct() {
     parent::__construct();
   }

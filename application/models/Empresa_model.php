@@ -2,7 +2,7 @@
 
 class Empresa_model extends CI_Model {
 
-  public $table = 'empresas';
+  protected $table = 'empresas';
 
   public function __construct() {
     parent::__construct();

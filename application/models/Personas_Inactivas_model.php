@@ -2,7 +2,7 @@
 
 class Personas_Inactivas_model extends CI_Model {
 
-  public $table = 'personas_inactivas';
+  protected $table = 'personas_inactivas';
 
   function __construct() {
     parent::__construct();

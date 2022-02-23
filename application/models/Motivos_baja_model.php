@@ -2,7 +2,7 @@
 
 class Motivos_baja_model extends CI_Model {
 
-  public $table = 'motivos_baja';
+  protected $table = 'motivos_baja';
 
   public function __construct() {
           parent::__construct();
