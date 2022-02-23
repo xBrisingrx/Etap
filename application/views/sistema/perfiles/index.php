@@ -13,7 +13,7 @@
 	    <i class="fa fa-gear g-mr-5"></i>
 	    Listado de perfiles registrados
 	  </h3>
-  	<div class="px-2">
+  	<div class="px-2  pb-2">
   		<table id="tabla_perfiles" class="table table-hover dt-responsive w-100 u-table--v1 mb-0">
 	      <thead>
 	        <tr>

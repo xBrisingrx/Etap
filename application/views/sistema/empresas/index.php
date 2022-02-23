@@ -10,7 +10,7 @@
 	    <i class="fa fa-gear g-mr-5"></i>
 	    Listado de empresas para personal registradas
 	  </h3>
-	   <div class="px-2">
+	   <div class="px-2  pb-2">
 	    <table id="tabla_empresas" class="table table-hover dt-responsive w-100 u-table--v1">
 	      <thead>
 	        <tr>

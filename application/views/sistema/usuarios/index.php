@@ -11,7 +11,7 @@
 	    Listado de usuarios registrados
 	  </h3>
 
-	  <div class="px-2">
+	  <div class="px-2  pb-2">
 	  	<table id="tabla_usuarios" class="table table-hover dt-responsive w-100 u-table--v1 mb-0 px-2">
 	      <thead>
 	        <tr>

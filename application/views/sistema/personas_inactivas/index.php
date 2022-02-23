@@ -11,7 +11,7 @@
       Personas inactivas
     </h3>
 
-   <div class="px-2">
+   <div class="px-2  pb-2">
       <table id="tabla_personas_inactivas" class="table table-hover dt-responsive w-100">
         <thead>
           <tr>
