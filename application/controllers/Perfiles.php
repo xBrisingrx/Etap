@@ -103,7 +103,7 @@ class Perfiles extends CI_Controller {
 		foreach ($perfiles as $p) {
 			if ( $this->session->userdata('rol') == 1 ) {
 				if ($p->activo) {
-					$botones = '<button class="btn btn-sm u-btn-primary " title="Editar" onclick="edit_profile('."'".$p->id."'".')" ><i class="fa fa-edit"></i></button> <button class="btn btn-sm u-btn-red"  title="Eliminar" onclick="delete_profile('."'".$p->id."'".')" ><i class="fa fa-trash-o"></i></button>';
+					$botones = '<button class="btn btn-sm u-btn-primary " title="Editar" onclick="edit_profile('."'".$p->id."'".')" ><i class="fa fa-edit"></i></button> <button class="btn btn-sm u-btn-red"  title="Eliminar" onclick="modal_destroy_profile('."'".$p->id."'".')" ><i class="fa fa-trash-o"></i></button>';
 				} else {
 					$botones = '<button class="btn btn-sm u-btn-primary" title="Editar" onclick="edit_profile('."'".$p->id."'".')" disabled ><i class="fa fa-edit"></i></button> <button class="btn btn-sm u-btn-aqua" title="Reactivar" onclick="reactivate_profile('."'".$p->id."'".')" ><i class="fa fa-retweet"></i></button>';
 				}
@@ -122,6 +122,11 @@ class Perfiles extends CI_Controller {
 			$data[] = $row;
 		}
 		echo json_encode(array( "data" => $data ));
+	}
+
+	function ajax_get_profiles($tipo) {
+		$profiles = $this->Perfil_model->get('tipo',$tipo);
+		echo ( json_encode($profiles) );
 	}
 
 	function existe($name = null, $tipo = null, $id = null){
