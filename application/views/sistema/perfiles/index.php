@@ -279,7 +279,7 @@
     });
 	}
 // Llamo al modal de advertencia para eliminar el perfil
-	function delete_profile(id) {
+	function modal_destroy_profile(id) {
 		$.ajax({
 			url: "<?php echo base_url('Perfiles/edit/');?>" + id,
 			type: "GET",
@@ -390,7 +390,7 @@
 	}
 
 	function modal_assign_attribute() {
-		save_method = 'assign_attribute';
+		save_method = 'create';
 		$('#form_asignar_atributo')[0].reset();
 		$('#modal_add_attribute .modal-title').text('Asignación de atributo al perfil de  <?php echo $nombre_perfil; ?>');
 		$('#modal_add_attribute #btnSave').text('Asignar atributo');
@@ -404,12 +404,12 @@
 	}
 
 	function modal_edit_attribute(id) {
-		save_method = 'update_assign_attribute'
+		save_method = 'update'
 		$('#error_form').hide(500)
 		$('#error_form').removeClass('alert alert-danger alert-info')
 		$('#form_asignar_atributo')[0].reset()
 		$.ajax({
-			url: "<?php echo base_url('Perfiles/edit_assign_attribute/');?>" + id,
+			url: "<?php echo base_url('Perfiles_Atributos/edit/');?>" + id,
 			type: "GET",
 			dataType: "JSON",
 			success: function(data) {
@@ -429,18 +429,19 @@
 	}
 
 	function save_asign_attribute() {
-		let url;
-		let id = $('#id_profile_attribute').val()
-		let tipo_id = $('#tipo_perfil_atributo').val()
-		let profile_id = $('#profile_id').val()
-		let attribute_id = $('#attribute_id').val()
-		let fecha = $('#fecha_inicio_vigencia_atributo_perfil').val()
-		url = '<?php echo base_url("Perfiles/");?>'+save_method
+		let data = {
+			id : $('#id_profile_attribute').val(),
+			tipo : $('#tipo_perfil_atributo').val(),
+			perfil_id : $('#profile_id').val(),
+			atributo_id : $('#attribute_id').val(),
+			fecha_inicio_vigencia : $('#fecha_inicio_vigencia_atributo_perfil').val()
+		}
+		let url = '<?php echo base_url("Perfiles_Atributos/");?>'+save_method
 		$.ajax({
 			url: url,
 			type: 'POST',
 			cache: false,
-			data: { profile_id: profile_id, attribute_id: attribute_id, fecha_inicio_vigencia: fecha, tipo: tipo_id, id: id } ,
+			data: data ,
 			dataType: 'JSON',
 			success: function( response ){
 				if ( response.status === 'success' ) {
@@ -460,9 +461,9 @@
 	}
 
 // Llamo al modal de advertencia para eliminar el atributo del perfil
-	function delete_attribute_profile(id) {
+	function modal_delete_attribute_profile(id) {
 		$.ajax({
-			url: "<?php echo base_url('Perfiles/edit_assign_attribute/');?>" + id,
+			url: "<?php echo base_url('Perfiles_Atributos/edit/');?>" + id,
 			type: "GET",
 			dataType: "JSON",
 			success: function(response) {
@@ -480,7 +481,7 @@
 	function destroy_attribute_profile() {
 		let id_attribute_profile = $('#id_attribute_profile_delete').val();
 		$.ajax({
-			url: "<?php echo base_url('Perfiles/destroy_assign_attribute/');?>" + id_attribute_profile,
+			url: "<?php echo base_url('Perfiles_Atributos/destroy/');?>" + id_attribute_profile,
 			type: "POST",
 			dataType: 'JSON',
 			success: function(response) {
@@ -578,7 +579,7 @@
 												});
 
 		table_perfiles_atributos = $('#tabla_perfiles_atributos').DataTable({
-																	ajax: '<?php echo base_url("Perfiles/ajax_list_perfiles_atributos/").$tipo_perfil;?>',
+																	ajax: '<?php echo base_url("Perfiles_Atributos/ajax_list/").$tipo_perfil;?>',
 																	language: {
 												                url: "<?php echo base_url(); ?>assets/vendor/datatables/spanish.json"
 												              }
