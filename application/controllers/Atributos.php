@@ -89,7 +89,7 @@ class Atributos extends CI_Controller {
 			$tipo_atributo = $this->input->post('tipo');
 			$nombre = $this->input->post('nombre');
 			if (!$this->existe($tipo_atributo, $nombre, $id)) {
-				$perfil = array(
+				$atributo = array(
 					'tipo' => $this->input->post('tipo'),
 					'nombre' => $this->input->post('nombre'),
 					'descripcion' => $this->input->post('descripcion'),
@@ -107,7 +107,8 @@ class Atributos extends CI_Controller {
 					'updated_at' => date('Y-m-d H:i:s'),
 					'user_last_updated_id' => $this->session->userdata('id')
 				);
-				if ( $this->Atributo_model->update_entry($id, $perfil) ) {
+				$atributo = $this->security->xss_clean($atributo);
+				if ( $this->Atributo_model->update_entry($id, $atributo) ) {
 					echo json_encode( array( 'status' => 'success', 'msg' => 'Datos actualizados' ) );
 				} else {
 					echo json_encode( array( 'status' => 'error', 'msg' => 'No se pudieron actualizar los datos' ) );
@@ -159,6 +160,11 @@ class Atributos extends CI_Controller {
 			$data[] = $row;
 		}
 		echo json_encode(array("data" => $data));
+	}
+
+	function ajax_get_attributes($tipo) {
+		$attributes = $this->Atributo_model->get('tipo',$tipo);
+		echo( json_encode($attributes) );
 	}
 
 
