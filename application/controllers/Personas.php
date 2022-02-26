@@ -207,6 +207,4 @@ class Personas extends CI_Controller {
       }
     } // end if form_validation
   } // end destroy
-
-
 }
