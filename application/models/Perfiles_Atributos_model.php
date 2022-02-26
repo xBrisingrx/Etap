@@ -62,7 +62,7 @@ class Perfiles_Atributos_model extends CI_Model {
           $data = $this->db->get_where($atribute_table, array( $type_id => $a->$type_id, 'atributo_id' => $perfil_atributo['atributo_id'] ))->row();
           if ( !$data->activo && !$data->personalizado ) {
             $data->activo = TRUE;
-            $data->user_created_id = date('Y-m-d H:i:s');
+            $data->user_last_updated_id = $this->session->userdata('id');
             $data->updated_at = date('Y-m-d H:i:s');
             $this->db->where('id', $data->id);
             $this->db->update($atribute_table, $data);
@@ -117,7 +117,7 @@ class Perfiles_Atributos_model extends CI_Model {
             $this->db->insert( $atribute_table, $entry );
           } else {
             // Verifico si el atributo esta activo/inactivo, en caso de estar inactivo reactivamos
-            $data = $this->db->get_where($atribute_table, array($type_id => $entry[$type_id], 'atributo_id' => $entry['atributo_id'] ))->row();
+            $data = $this->db->get_where($atribute_table, array($type_id => $a->$type_id, 'atributo_id' => $perfil_atributo->atributo_id ))->row();
             if ( !$data->activo && !$data->personalizado ) {
               $data->activo = TRUE;
               $data->user_last_updated_id = $entry['user_last_updated_id'];
