@@ -32,20 +32,22 @@ class Perfiles_Atributos_model extends CI_Model {
       $profile_table = 'perfiles_personas';
       $atribute_table = 'atributos_personas';
       $type_id = 'persona_id';
+      $model = 'Atributos_Personas_model';
     } else {
       $profile_table = 'perfiles_vehiculos';
       $atribute_table = 'atributos_vehiculos';
       $type_id = 'vehiculo_id';
+      $model = 'Atributos_Vehiculos_model';
     }
-    if ( empty( $this->existe( $perfil_atributo ) ) ) {
-      $this->db->trans_start();
-      if ( $this->db->insert('perfiles_atributos', $perfil_atributo) ) {
-        // Busco las personas/vehiculos que tengan el perfil al que se le agrego un atributo
-        $afectados = $this->db->get_where( $profile_table, 
-                                           array('perfil_id' => $perfil_atributo['perfil_id'], 'activo' => true) )->result();
-        // Lo recorro para agregarle el atributo correspondiente
-        foreach ($afectados as $a) {
-          // Genero mi entrada
+    $this->db->trans_start();
+    if ( $this->db->insert('perfiles_atributos', $perfil_atributo) ) {
+      // Busco las personas/vehiculos que tengan el perfil al que se le agrego un atributo
+      $afectados = $this->db->get_where( $profile_table, 
+                                         array('perfil_id' => $perfil_atributo['perfil_id'], 'activo' => true) )->result();
+      // Lo recorro para agregarle el atributo correspondiente
+      foreach ($afectados as $a) {
+        if ( !$this->$model->existe( $a->$type_id, $perfil_atributo['atributo_id'] ) ) {
+          // La asociacion no existe, la creamos
           $entry = array();
           $entry['atributo_id'] = $perfil_atributo['atributo_id'];
           $entry[$type_id] = $a->$type_id;
@@ -54,26 +56,19 @@ class Perfiles_Atributos_model extends CI_Model {
           $entry['updated_at'] = date('Y-m-d H:i:s');
           $entry['user_created_id'] = $this->session->userdata('id');
           $entry['user_last_updated_id'] = $this->session->userdata('id');
-          $entry['activo'] = true;
-          
-          if ( !$this->existe( $perfil_atributo['tipo'], $entry ) ) {
-            $this->db->insert( $atribute_table, $entry );
-          } else {
-            // Verifico si el atributo esta activo/inactivo, en caso de estar inactivo reactivamos
-            $data = $this->db->get_where($atribute_table, array($type_id => $entry[$type_id], 'atributo_id' => $entry['atributo_id'] ))->row();
-            if ( !$data->activo && !$data->personalizado ) {
-              $data->activo = TRUE;
-              $data->user_created_id = $entry['user_last_updated_id'];
-              $data->updated_at = $entry['updated_at'];
-              $this->db->where('id', $data->id);
-              $this->db->update($atribute_table, $data);
-            }
-          } 
-        } // foreach afectados
-      }
-    } else {
-      // La relacion perfil_atributo ya existe
-      return FALSE;
+          $this->db->insert( $atribute_table, $entry );
+        } else {
+          // Verifico si el atributo esta activo/inactivo, en caso de estar inactivo reactivamos
+          $data = $this->db->get_where($atribute_table, array( $type_id => $a->$type_id, 'atributo_id' => $perfil_atributo['atributo_id'] ))->row();
+          if ( !$data->activo && !$data->personalizado ) {
+            $data->activo = TRUE;
+            $data->user_created_id = date('Y-m-d H:i:s');
+            $data->updated_at = date('Y-m-d H:i:s');
+            $this->db->where('id', $data->id);
+            $this->db->update($atribute_table, $data);
+          }
+        } 
+      } // foreach afectados
     }
 
     $this->db->trans_complete();
