@@ -393,8 +393,8 @@
 			success: function(data) {
 				let resp = data[0]
 				$('#modal_delete_attribute #id_attribute_delete').val(resp.id)
-				$('#modal_delete_attribute #name_attribute_delete').append(resp.nombre)
-				$('#modal_delete_attribute #description_attribute_delete').append(resp.descripcion)
+				$('#modal_delete_attribute #name_attribute_delete').html(`<b>Nombre: </b> ${resp.nombre}`)
+				$('#modal_delete_attribute #description_attribute_delete').html(`<b>Detalle: </b> ${resp.descripcion}`)
 				$('#modal_delete_attribute').modal('show')
 			},
 			error: function() {
