@@ -385,7 +385,7 @@
   	})
 	}
 
-	function delete_attribute(id) {
+	function modal_destroy_attribute(id) {
 		$.ajax({
 			url: "<?php echo base_url('Atributos/edit/');?>" + id,
 			type: "GET",

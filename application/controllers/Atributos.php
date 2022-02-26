@@ -150,7 +150,7 @@ class Atributos extends CI_Controller {
 			$row[] = (!$a->activo) ? $a->update_at : ' ';
 			if ($this->session->userdata('rol') == 1) {
 				if ($a->activo) {
-					$row[] = '<button class="btn btn-xs u-btn-primary mr-2 " title="Editar" onclick="edit_attribute('."'".$a->id."'".')" ><i class="fa fa-edit"></i></button> <button class="btn btn-xs u-btn-red " title="Eliminar" onclick="delete_attribute('."'".$a->id."'".')" ><i class="fa fa-trash-o"></i></button>';
+					$row[] = '<button class="btn btn-xs u-btn-primary mr-2 " title="Editar" onclick="edit_attribute('."'".$a->id."'".')" ><i class="fa fa-edit"></i></button> <button class="btn btn-xs u-btn-red " title="Eliminar" onclick="modal_destroy_attribute('."'".$a->id."'".')" ><i class="fa fa-trash-o"></i></button>';
 				} else {
 					$row[] = '<button class="btn btn-xs u-btn-primary mr-2 " title="Editar" onclick="edit_attribute('."'".$a->id."'".')" disabled ><i class="fa fa-edit"></i></button> <button class="btn btn-xs u-btn-aqua" title="Reactivar" onclick="reactivate_attribute('."'".$a->id."'".')" ><i class="fa fa-retweet"></i></button>';
 				}
