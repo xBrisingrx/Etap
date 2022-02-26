@@ -35,7 +35,7 @@ class Perfiles_Atributos extends CI_Controller {
 		$this->form_validation->set_rules('tipo', 'Tipo', 'required');
 		$this->form_validation->set_rules('perfil_id', 'Perfil', "required");
 		$this->form_validation->set_rules('atributo_id', 'Atributo', "required");
-		$this->form_validation->set_rules('fecha_inicio_vigencia', 'Fecha inicio vigencia', "required");
+		$this->form_validation->set_rules('fecha_inicio_vigencia', 'Fecha inicio vigencia', "required|callback_valid_date");
 
 		if ($this->form_validation->run() == FALSE) {
 			echo json_encode( array( 'status' => 'error', 'class' => 'danger' ,'msg' => validation_errors() ) );
@@ -109,6 +109,18 @@ class Perfiles_Atributos extends CI_Controller {
 	function existe($entry , $id = null) {
 		// Si enviamos $perfil_atributo_id es una edicion
 		return !empty( $this->Perfiles_Atributos_model->existe($entry, $id) );
+	}
+
+	function valid_date($date){
+		$data = strtotime( $date );
+		$invalid_date = strtotime( "0001-01-01" );
+		$invalid_date2 = strtotime("1980-01-01");
+		if ( ($data == $invalid_date) || ( $data < $invalid_date2 ) ) {
+			$this->form_validation->set_message('valid_date', 'La %s ingresada no es valida');
+      return FALSE;
+		} else {
+			return TRUE;
+		}
 	}
 
 }
