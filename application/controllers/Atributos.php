@@ -121,9 +121,9 @@ class Atributos extends CI_Controller {
 
 	function destroy($id) {
 		if ($this->Atributo_model->destroy($id)) {
-			echo 'ok';
+			echo json_encode( array('status' => 'success', 'msg' => 'Atributo eliminado') );
 		} else {
-			echo 'Error';
+			echo json_encode( array('status' => 'error', 'msg' => 'No se pudo eliminar el atributo') );
 		}
 	}
 

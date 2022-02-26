@@ -406,14 +406,13 @@
 	function destroy_attribute() {
 		$.ajax({
 			url: "<?php echo base_url('Atributos/destroy/');?>" + $('#id_attribute_delete').val(),
-			type: "POST",
-			success: function(msg) {
-				if (msg === 'ok') {
+			type: "GET",
+			success: function(response) {
+				if (response.status === 'success') {
 					table_atributos.ajax.reload(null,false)
 					$('#modal_delete_attribute').modal('hide')
-				} else {
-					noty_alert( 'error' , 'Error al intentar eliminar el atributo ' )
 				}
+				noty_alert( response.status, response.msg )
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				noty_alert( 'error' , 'Fallo el eliminar atributo ' )
