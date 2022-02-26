@@ -41,7 +41,7 @@
 	    <i class="fa fa-gear g-mr-5"></i>
 	    Asignacion de atributos al perfil de <?php echo $nombre_perfil; ?>
 	  </h3>
-	  <div class="px-2">
+	  <div class="px-2 pb-2">
 	  	<table id="tabla_perfiles_atributos" class="table table-hover dt-responsive w-100 u-table--v1 mb-0 display compact">
 	      <thead>
 	        <tr>
