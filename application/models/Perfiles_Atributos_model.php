@@ -120,8 +120,8 @@ class Perfiles_Atributos_model extends CI_Model {
             $data = $this->db->get_where($atribute_table, array($type_id => $a->$type_id, 'atributo_id' => $perfil_atributo->atributo_id ))->row();
             if ( !$data->activo && !$data->personalizado ) {
               $data->activo = TRUE;
-              $data->user_last_updated_id = $entry['user_last_updated_id'];
-              $data->updated_at = $entry['updated_at'];
+              $data->user_last_updated_id = $this->session->userdata('id');
+              $data->updated_at = date('Y-m-d H:i:s');
               $this->db->where('id', $data->id);
               $this->db->update($atribute_table, $data);
             }
@@ -141,29 +141,30 @@ class Perfiles_Atributos_model extends CI_Model {
   function destroy($id){
     $perfil_atributo = $this->DButil->get_for_id($this->table,$id);
     $atribute_table = ( $perfil_atributo->tipo == 1 ) ? 'atributos_personas' : 'atributos_vehiculos';
-    $tipo = ( $perfil_atributo->tipo == 1 ) ? 'persona_id' : 'vehiculo_id';
-    $registros_a_eliminar = $this->no_tiene_atributo_en_mas_de_un_perfil($perfil_atributo->tipo, $perfil_atributo->atributo_id);
+    $tipo_id = ( $perfil_atributo->tipo == 1 ) ? 'persona_id' : 'vehiculo_id';
+    $registros_a_eliminar = $this->no_tiene_atributo_en_mas_de_un_perfil( $perfil_atributo->tipo, $perfil_atributo->atributo_id );
     $fecha = date('Y-m-d H:i:s');
     $usuario = $this->session->id;
 
     $this->db->trans_begin();
-    foreach ($registros_a_eliminar as $entry) {
-      if ( ($entry->perfil_id == $perfil_atributo->perfil_id) ) {
-        $atributo_baja = $this->db->get_where($atribute_table, array( $tipo => $entry->tipo_id, 'atributo_id' => $perfil_atributo->atributo_id ) )->row();
-        if ( !$atributo_baja->personalizado ) {
-          $atributo_baja->activo = FALSE;
-          $atributo_baja->updated_at = $fecha;
-          $atributo_baja->user_last_updated_id = $usuario;
-          $this->db->where('id', $atributo_baja->id);
-          $this->db->update($atribute_table, $atributo_baja);
+      foreach ($registros_a_eliminar as $entry) {
+        if ( ($entry->perfil_id == $perfil_atributo->perfil_id) ) {
+          $atributo_baja = $this->db->get_where($atribute_table, array( $tipo_id => $entry->tipo_id, 'atributo_id' => $perfil_atributo->atributo_id ) )->row();
+          if ( !$atributo_baja->personalizado ) {
+            $atributo_baja->activo = FALSE;
+            $atributo_baja->updated_at = $fecha;
+            $atributo_baja->user_last_updated_id = $usuario;
+            $this->db->where('id', $atributo_baja->id);
+            $this->db->update($atribute_table, $atributo_baja);
+          }
         }
       }
-    }
-    $perfil_atributo->activo = FALSE;
-    $perfil_atributo->updated_at = $fecha;
-    $perfil_atributo->user_last_updated_id = $usuario;
-    $this->db->where('id', $perfil_atributo->id);
-    $this->db->update('perfiles_atributos', $perfil_atributo);
+      $perfil_atributo->activo = FALSE;
+      $perfil_atributo->updated_at = $fecha;
+      $perfil_atributo->user_last_updated_id = $usuario;
+      $this->db->where('id', $perfil_atributo->id);
+      $this->db->update('perfiles_atributos', $perfil_atributo);
+    $this->db->trans_complete();
     if ($this->db->trans_status() === FALSE) {
       $this->db->trans_rollback();
       return false;

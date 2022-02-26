@@ -300,18 +300,16 @@
 		var id_profile = $('#id_profile_delete').val();
 		$.ajax({
 			url: "<?php echo base_url('Perfiles/destroy/');?>" + id_profile,
-			type: "POST",
-			success: function(msg)
-			{
-				if (msg === 'ok') {
+			type: "GET",
+			dataType: 'JSON',
+			success: function(response){
+				if (response.status === 'success') {
 					table_perfiles.ajax.reload(null,false);
 					$('#modal_delete_profile').modal('hide');
-				} else {
-					noty_alert( 'error' , 'No se pudo eliminar el perfil' )
 				}
+				noty_alert( response.status, response.msg )
 			},
-			error: function(jqXHR, textStatus, errorThrown)
-			{
+			error: function(jqXHR, textStatus, errorThrown){
 				noty_alert( 'error' , 'No se pudo eliminar el perfil' )
 			}
 		});

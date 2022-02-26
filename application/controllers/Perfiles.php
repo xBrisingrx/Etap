@@ -97,6 +97,14 @@ class Perfiles extends CI_Controller {
 		}
 	}
 
+	function destroy($id) {
+		if ($this->Perfil_model->destroy($id)) {
+			echo json_encode( array('status' => 'success', 'msg' => 'Perfil eliminado') );
+		} else {
+			echo json_encode( array('status' => 'error', 'msg' => 'No se pudo eliminar el perfil') );
+		}
+	}
+
 	function ajax_list_perfiles($tipo) {
 		$perfiles = $this->Perfil_model->get('tipo',$tipo);
 		$data = array();
