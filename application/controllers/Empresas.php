@@ -12,7 +12,7 @@ class Empresas extends CI_Controller {
 	function administrar( $tipo = null ) {
 		if ($tipo != null) {
 			$title['title'] = ($tipo == 1) ? 'Empresas de Personal' : 'Empresas de vehiculos';
-			$data['label_tipo_empresa'] = ($tipo == 1) ? 'Personal' : 'Vechículos';
+			$data['label_tipo_empresa'] = ($tipo == 1) ? 'personal' : 'vechículos';
 			$data['tipo_empresa'] = $tipo;
 			$data['empresas'] = $this->Empresa_model->get('tipo', $tipo);
 			$this->load->view('layout/header',$title);

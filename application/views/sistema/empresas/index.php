@@ -8,7 +8,7 @@
 	<div class="card g-brd-darkpurple rounded-0 g-mb-30">
 	  <h3 class="card-header g-bg-darkpurple g-brd-transparent g-color-white g-font-size-16 rounded-0 mb-2">
 	    <i class="fa fa-gear g-mr-5"></i>
-	    Listado de empresas para personal registradas
+	    Listado de empresas para <?php echo $label_tipo_empresa?> registradas
 	  </h3>
 	   <div class="px-2  pb-2">
 	    <table id="tabla_empresas" class="table table-hover dt-responsive w-100 u-table--v1">
@@ -75,7 +75,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">¿ Esta seguro de eliminar este usuario ?</h5>
+        <h5 class="modal-title">¿ Esta seguro de eliminar esta empresa ?</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
