@@ -45,6 +45,24 @@ class Vehiculo_model extends CI_Model {
     return ( $this->db->update('vehiculos', $entry) ) && ( $this->db->insert('vehiculos_inactivos', $vehiculo) );
   }
 
+  function reactivar( $id, $entry ) {
+    $this->db->trans_start();
+    // Se reactiva el vehiculo
+    $this->db->query('UPDATE vehiculos SET activo = 1 WHERE id = '.$entry['vehiculo_id']);
+    // Se desactiva el registro vehiculo_inactivo
+    $this->db->where('id', $id);
+    $this->db->update('vehiculos_inactivos', $entry);
+    $this->db->trans_complete();
+
+    if ($this->db->trans_status() == FALSE) {
+      $this->db->trans_rollback();
+      return false;
+    } else {
+      $this->db->trans_commit();
+      return true;
+    }
+  }
+
 	function get_motivos_baja() {
     return $this->db->select('id, motivo')
                       ->from('motivos_baja')
