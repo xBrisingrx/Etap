@@ -20,3 +20,4 @@ application/logs/*
 # Ignoro para no subur cambios con datos 
 application/config/config.php
 application/config/database.php
+/assets/uploads/*
