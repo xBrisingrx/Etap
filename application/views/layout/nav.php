@@ -101,6 +101,9 @@
                       <a href="<?php echo base_url('Asignaciones_vehiculo');?>">Admin asignaciones</a>
                     </li>
                     <li>
+                      <a href="<?php echo base_url('Aseguradoras');?>">Admin aseguradoras</a>
+                    </li>
+                    <li>
                       <a href="<?php echo base_url('Atributos/dependencias_atributos/2');?>">Dependencia de atributos</a>
                     </li>
                     <li>
