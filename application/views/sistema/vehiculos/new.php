@@ -104,7 +104,7 @@
 	      			<thead>
 	      				<tr>
 	      					<th>Marca</th>
-	      					<th>Nombre</th>
+	      					<th>Modelo</th>
 	      					<th>Acciones</th>
 	      				</tr>
 	      			</thead>
