@@ -98,6 +98,9 @@
                       <a href="<?php echo base_url('Atributos/index/2');?>">Admin de atributos</a>
                     </li>
                     <li>
+                      <a href="<?php echo base_url('Asignaciones_vehiculo');?>">Admin asignaciones</a>
+                    </li>
+                    <li>
                       <a href="<?php echo base_url('Atributos/dependencias_atributos/2');?>">Dependencia de atributos</a>
                     </li>
                     <li>
