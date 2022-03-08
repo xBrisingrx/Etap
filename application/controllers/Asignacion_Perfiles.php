@@ -10,10 +10,12 @@ class Asignacion_Perfiles extends CI_Controller {
 	function __construct() {
 	  parent::__construct();
 	  $this->load->model(array(
-	  	'Persona_model',
 	  	'Perfil_model',
+	  	'Perfiles_Atributos_model',
+	  	'Persona_model',
 	  	'Perfiles_Personas_model',
-	  	'Perfiles_Atributos_model'
+	  	'Vehiculo_model',
+	  	'Perfiles_Vehiculos_model'
 	  ));
 	  date_default_timezone_set('America/Argentina/Buenos_Aires');
 	  if ( empty( $this->session->nombre_usuario ) ) {
@@ -85,7 +87,6 @@ class Asignacion_Perfiles extends CI_Controller {
 				$row[] = $p->nombre_perfil;
 				$row[] = date('d-m-Y', strtotime($p->fecha_inicio_vigencia));
 				$row[] = ($p->activo) ? ' ' : date('d-m-Y', strtotime($p->updated_at));
-				// $row[] = '<button class=" btn btn-sm u-btn-primary mr-2" title="Editar" onclick="edit('."'".$p->id."'".', 2 )" ><i class="fa fa-edit"></i></button> <button class="btn btn-sm u-btn-red" title="Eliminar" onclick="modal_destroy('."'".$p->id."'".', 2 )" ><i class="fa fa-trash-o"></i></button>';
 				if ($this->session->userdata('rol') == 1 ) {
 					$row[] = '<button class=" btn btn-sm u-btn-primary mr-2" title="Editar"  onclick="edit('."'".$p->id."'".', 2 )"><i class="fa fa-edit"></i></button> <button class="btn btn-sm u-btn-red" title="Eliminar" onclick="modal_destroy('."'".$p->id."'".', 2 )" ><i class="fa fa-trash-o"></i></button>';
 				} else {

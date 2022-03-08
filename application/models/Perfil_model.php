@@ -9,21 +9,13 @@ class Perfil_model extends CI_Model {
   }
 
   function get($attr = null, $valor = null) {
-    if($attr != null and $valor != null) {
-      $query = $this->db->select('*')
-                          ->from($this->table)
-                            ->where('perfiles.'.$attr, $valor)
-                              ->where('perfiles.activo', true)
-                                ->order_by('nombre', 'asc')
-                                  ->get();
-      if ($query->num_rows() == 1 ) {
-        return $query->row();
-      } else {
-        return $query->result();
-      }
-    } else {
-      return $this->db->get('perfiles')->result();
+    $this->db->select('*')
+                ->from($this->table)
+                    ->where('perfiles.activo', true);
+    if ($attr != null and $valor != null) {
+      $this->db->where("perfiles.$attr", $valor);
     }
+    return $this->db->order_by('nombre', 'asc')->get()->result();
   } // end GET 
 
   function insert_entry($perfil) {

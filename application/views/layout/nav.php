@@ -61,9 +61,9 @@
                     <li>
                       <a href="<?php echo base_url('Atributos/index/1');?>">Admin de atributos</a>
                     </li>
-                    <li>
+<!--                     <li>
                       <a href="<?php echo base_url('Atributos/dependencias_atributos/1');?>">Dependencia de atributos</a>
-                    </li>
+                    </li> -->
                     <li>
                       <a href="<?php echo base_url('Empresas/administrar/1');?>">Admin de empresas</a>
                     </li>
@@ -103,9 +103,9 @@
                     <li>
                       <a href="<?php echo base_url('Aseguradoras');?>">Admin aseguradoras</a>
                     </li>
-                    <li>
+<!--                     <li>
                       <a href="<?php echo base_url('Atributos/dependencias_atributos/2');?>">Dependencia de atributos</a>
-                    </li>
+                    </li> -->
                     <li>
                       <a href="<?php echo base_url('Empresas/administrar/2');?>">Admin de empresas</a>
                     </li>
@@ -115,11 +115,9 @@
                   </ul>
                   <!-- End Submenu Vehiculos -->
                 </li>
-                <li class="nav-item g-mx-20--lg g-mb-5 g-mb-0--lg">
-                  <a href="<?php echo base_url('Contratos');?>" class="nav-link">Contratos
-
-              </a>
-                </li>
+<!--                 <li class="nav-item g-mx-20--lg g-mb-5 g-mb-0--lg">
+                  <a href="<?php echo base_url('Contratos');?>" class="nav-link">Contratos</a>
+                </li> -->
                 <li class="nav-item hs-has-sub-menu g-mx-20--lg g-mb-5 g-mb-0--lg">
                   <a href="<?php echo base_url('Documentos');?>" class="nav-link" id="nav-documentos" aria-haspopup="true" aria-expanded="false" aria-controls="nav-submenu-1">Documentos
                   </a>

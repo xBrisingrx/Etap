@@ -9,31 +9,19 @@ class Perfiles_Personas_model extends CI_Model {
     $this->load->model('Atributos_Personas_model');
   }
 
-  public function get($table_query = null, $attr = null, $valor = null) {
-    if($table_query != null and $attr != null and $valor != null) {
-      $sql =  $this->db->select('perfiles_personas.id, perfiles_personas.persona_id, perfiles_personas.perfil_id,
-                                 personas.nombre as nombre_persona, personas.apellido as apellido_persona,
-                                 perfiles.nombre as nombre_perfil, perfiles_personas.fecha_inicio_vigencia')
-                            ->from('perfiles_personas')
-                              ->join('personas', 'personas.id = perfiles_personas.persona_id')
-                                  ->join('perfiles', 'perfiles.id = perfiles_personas.perfil_id')
-                                    ->where($table_query.'.'.$attr, $valor)
-                                    ->where('personas.activo', true)
-                                    ->where('perfiles_personas.activo', TRUE)
-                                      ->get();
-      return $sql->result();
-    } else {
-        $this->db->select('personas.nombre as nombre_persona, personas.apellido as apellido_persona,
-                           personas.dni, personas.cuil, perfiles.nombre as nombre_perfil,
-                           perfiles_personas.fecha_inicio_vigencia, perfiles_personas.updated_at,
-                           perfiles_personas.activo, perfiles_personas.id')
-                      ->from('perfiles_personas')
-                        ->join('personas', 'personas.id = perfiles_personas.persona_id')
-                        ->join('perfiles', 'perfiles.id = perfiles_personas.perfil_id')
-                          ->where('personas.activo', true)
-                          ->where('perfiles_personas.activo', TRUE);
-        return $this->db->get()->result();
-      }
+  function get($attr = null, $valor = null) {
+    $this->db->select('perfiles_personas.id, perfiles_personas.persona_id, perfiles_personas.perfil_id,
+                               personas.nombre as nombre_persona, personas.apellido as apellido_persona,
+                               perfiles.nombre as nombre_perfil, perfiles_personas.fecha_inicio_vigencia')
+                          ->from('perfiles_personas')
+                            ->join('personas', 'personas.id = perfiles_personas.persona_id')
+                            ->join('perfiles', 'perfiles.id = perfiles_personas.perfil_id')
+                              ->where('personas.activo', true)
+                              ->where('perfiles_personas.activo', TRUE);
+    if( $attr != null and $valor != null ) {
+      $this->db->where( "perfiles_personas.$attr", $valor );
+    }
+    return $this->db->get()->result();
   }
 
   function get_perfil_asignado( $persona_id, $perfil_id ) {
@@ -41,12 +29,12 @@ class Perfiles_Personas_model extends CI_Model {
                                  array( 'perfil_id' => $perfil_id, 'persona_id' => $persona_id ) )->row();
   }
 
-  public function insert_entry($entry) {
+  function insert_entry($entry) {
     $this->db->trans_start();
 
-      $this->db->insert($this->table, $entry);
-      $atributos_del_perfil = $this->db->get_where( 'perfiles_atributos', array( 'perfil_id' => $entry['perfil_id'], 'activo'=> true ) )->result();
-      $this->activar_atributos_de_un_perfil($atributos_del_perfil, $entry['persona_id'] );
+    $this->db->insert($this->table, $entry);
+    $atributos_del_perfil = $this->db->get_where( 'perfiles_atributos', array( 'perfil_id' => $entry['perfil_id'], 'activo'=> true ) )->result();
+    $this->activar_atributos_de_un_perfil($atributos_del_perfil, $entry['persona_id'] );
 
     $this->db->trans_complete();
     if ($this->db->trans_status() === FALSE) {

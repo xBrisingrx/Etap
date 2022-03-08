@@ -27,6 +27,10 @@ class Personas extends CI_Controller {
 		// $this->backup_semanal();
 	}
 
+	function show($id){ 
+		echo json_encode( $this->DButil->get_for_id('personas', $id) );
+	}
+
 	function new( $error = null ) {
 		if ($this->session->userdata('rol') != 1) {
 			$this->index();
@@ -114,7 +118,6 @@ class Personas extends CI_Controller {
 			$title['title'] = 'Edición de persona';
 			$data['persona'] = $persona[0];
 			$data['empresas'] = $this->Empresa_model->get('tipo', 1);
-
 			$this->load->view('layout/header',$title);
 			$this->load->view('layout/nav');
 			$this->load->view('sistema/personas/edit',$data);

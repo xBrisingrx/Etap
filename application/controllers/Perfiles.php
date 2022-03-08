@@ -7,7 +7,7 @@ class Perfiles extends CI_Controller {
 	  parent::__construct();
 	  $this->load->model('Perfil_model');
 	  $this->load->model('Persona_model');
-	  // $this->load->model('Vehiculo_model');
+	  $this->load->model('Vehiculo_model');
 	  // $this->load->model('Perfiles_Atributos_model');
 	  // $this->load->model('Perfiles_Personas_model');
 	  // $this->load->model('Perfiles_Vehiculos_model');
@@ -23,7 +23,7 @@ class Perfiles extends CI_Controller {
 		$title['title'] = ($tipo == 1) ? 'Perfiles de Personal' : 'Perfiles de vehiculos';
 		$data['nombre_perfil'] = ($tipo == 1) ? 'Personal' : 'Vechículos';
 		$data['tipo_perfil'] = $tipo;
-		$data['perfiles'] = $this->Perfil_model->get('tipo',$tipo);
+		$data['perfiles'] = $this->Perfil_model->get( array('tipo',$tipo) );
 		// $data['perfiles_atributos'] = $this->Perfiles_Atributos_model->get('tipo',$tipo);
 		$this->load->view('layout/header',$title);
 		$this->load->view('layout/nav');
@@ -63,7 +63,7 @@ class Perfiles extends CI_Controller {
 	}
 
 	function edit($id) {
-		echo json_encode( $this->Perfil_model->get('id',$id) );
+		echo json_encode( $this->DButil->get_for_id( 'perfiles', $id ) );
 	}
 
 	function update() {
@@ -129,7 +129,7 @@ class Perfiles extends CI_Controller {
 
 			$data[] = $row;
 		}
-		echo json_encode(array( "data" => $data ));
+		echo json_encode( array( "data" => $data ) );
 	}
 
 	function ajax_get_profiles($tipo) {

@@ -28,11 +28,15 @@ class Vehiculos extends CI_Controller {
     $this->load->view('layout/footer');
   }
 
+  function show($id){
+    echo json_encode( $this->Vehiculo_model->get( 'id', $id )[0] );
+  }
+
   function new() {
     $title['title'] = 'Alta de vehiculo';
     $data['empresas'] = $this->Empresa_model->get('tipo', '2');
     $data['asignaciones'] = $this->DButil->get('asignaciones_vehiculo', array('activo' => true));
-    $data['interno_sugerido'] = $this->Vehiculo_model->get_ultimo_interno() + 1;
+    // $data['interno_sugerido'] = $this->Vehiculo_model->get_ultimo_interno() + 1;
     $this->load->view('layout/header',$title);
     $this->load->view('layout/nav');
     $this->load->view('sistema/vehiculos/new', $data);
@@ -66,7 +70,7 @@ class Vehiculos extends CI_Controller {
       if ($this->Vehiculo_model->insert_entry('vehiculos', $vehiculo)) {
         if ( !empty( $_FILES['imagenes']['name'][0] ) ) {
           $last_id = $this->Vehiculo_model->get_last_id();
-          $msg_images = $this->upload_images( $_FILES['imagenes'], $this->input->post('interno') , $last_id );
+          $msg_images = $this->upload_images( $_FILES['imagenes'], $last_id );
         }
         if ( !empty( $this->input->post('asignacion') ) ) {
           $entry = array( 
@@ -146,7 +150,7 @@ class Vehiculos extends CI_Controller {
     } // end if form_validation
   } // end destroy_vehiculos
 
-  function upload_images( $imagenes, $interno, $vehiculo_id ) {
+  function upload_images( $imagenes, $vehiculo_id ) {
     $response = array();
     $fileCount = count($_FILES['imagenes']['name']);
     $path = "assets/uploads/vehiculos/img/".date('Y').'/'.date('m').'/'.$vehiculo_id;
@@ -157,7 +161,7 @@ class Vehiculos extends CI_Controller {
     
     for ($i=0; $i < $fileCount; $i++) {
       $extension = pathinfo($imagenes['name'][$i])['extension'];
-      $filename = $this->gererar_nombre_archivo($path, $extension);
+      $filename = $this->Fileutil->gererar_nombre_archivo($path, $extension);
       $imagen = array(
         'tabla' => 'vehiculos',
         'tabla_id' => $vehiculo_id,
@@ -177,15 +181,23 @@ class Vehiculos extends CI_Controller {
     return $response;
   }
 
-  function gererar_nombre_archivo($path, $extension){
-    // genero un nombre random para un archivo
-    $filename = '';
-    do {
-      $str=rand();
-      $filename = md5($str);
-      $filename = "$filename.$extension";
-    } while ( file_exists( "$path/$filename" ) );
-    return $filename;
+  function ajax_upload_imagen(){
+    $vehiculo_id = $this->input->post('vehiculo_id');
+    $folder = "vehiculos/img/";
+    $response = $this->Fileutil->subir_multiples_archivos( $_FILES['imagenes'], $folder, 'vehiculos', $vehiculo_id, 'imagenes' );
+    if ($response['status'] === TRUE) {
+      echo json_encode( array( 'status' => 'success', 'msg' => 'Imagenes cargadas', 'imagenes' => $response['archivos'] ) );
+    } else {
+      echo json_encode( array( 'status' => 'error', 'msg' => 'No se pudieron subir las imagenes' ) );
+    }
+  }
+
+  function eliminar_imagen(){
+    if ( $this->DButil->destroy_entry('archivos', $this->input->post('imagen_id')) ) {
+      echo json_encode( array( 'status' => 'success', 'msg' => 'Imagenes eliminada' ) );
+    } else {
+      echo json_encode( array( 'status' => 'error', 'msg' => 'No se pudo eliminar la imagen' ) );
+    }
   }
 
   function num_interno_libre( ) {
@@ -235,6 +247,10 @@ class Vehiculos extends CI_Controller {
       $data[] = $row;
     }
     echo json_encode(array("data" => $data));
+  }
+
+  function get_imagenes($id) {
+      echo json_encode( $this->DButil->get('archivos', array('tabla' => 'vehiculos', 'tabla_id' => $id, 'activo' => true)) );
   }
 
   function _validate_rules($edit = null){
@@ -302,6 +318,22 @@ class Vehiculos extends CI_Controller {
           echo json_encode( array('status' => 'success', 'msg' => 'No se pudieron registrar los datos') );
         }
       }
+  }
+
+  function destroy_atributo($table, $id) { /* modelo o tipo vehiculo */
+    if ($this->DButil->destroy_entry($table, $id)) {
+      echo json_encode( array( 'status' => 'success', 'msg' => 'Registro eliminado' ) );
+    } else {
+      echo json_encode( array( 'status' => 'error', 'msg' => 'No se pudo eliminar el registro' ) );
+    }
+  }
+
+  function destroy_marca($id) {
+    if ($this->Vehiculo_model->destroy_marca($id)) {
+      echo json_encode( array( 'status' => 'success', 'msg' => 'Marca eliminada' ) );
+    } else {
+      echo json_encode( array( 'status' => 'error', 'msg' => 'No se pudo eliminar la marca' ) );
+    }
   }
 
   function _validate_attr($table){ 

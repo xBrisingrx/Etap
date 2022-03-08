@@ -29,3 +29,17 @@ function clean_form(form_id) {
   $(`#${form_id} .error`).empty()
   $(`#${form_id}`)[0].reset()
 }
+
+// con esta fn lo que hago es mostrar los archivos en el modal de archivos
+function dibujar_archivo( div_id, archivo_id, archivo_ruta){
+  $(`#${div_id}`).append(`
+    <div class='col-2 row mx-auto mt-2' id='archivo_${archivo_id}'>
+      <div class='col-12 mb-2'> 
+        <a href='${archivo_ruta}' target="_blank" class="text-center px-1 py-1"> <i class="fa fa-file-pdf-o fa-2x"></i></a>
+      </div>
+      <div>
+        <button class="btn btn-xs u-btn-red" onclick="modal_delete_archivo('${archivo_id}')"> borrar</button>
+      </div>
+    </div>
+  `).show('slow')
+}

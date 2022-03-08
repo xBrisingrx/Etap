@@ -24,6 +24,9 @@
 
     <script>
       const base_url = "<?php echo base_url('');?>"
+      const rol_usuario = "<?php echo $this->session->userdata('rol')?>"
+      const current_date =  "<?php date('d-m-Y') ?>"
+      const datatables_lang = "<?php echo base_url('assets/vendor/datatables/spanish.json');?>"
       $(document).on('ready', function () {
         // initialization of header
         $.HSCore.components.HSHeader.init($('#js-header'));

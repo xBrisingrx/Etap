@@ -18,6 +18,29 @@ class DButil_model extends CI_Model {
     return $this->db->get_where($table, array('id'=>$id))->row();
   }
 
+  function get_last_id($tabla) {
+    $query = $this->db->select('*')
+                        ->from($tabla)
+                          ->limit(1)
+                            ->order_by('id', 'DESC')
+                              ->get()->row();
+    if (!empty( $query )) {
+      return $query->id;
+    } else {
+      return 0;
+    }
+  }
+
+  function get_archivo($tabla, $id, $carpeta){
+    // Esta fn la uso me trae el nombre del archivo en pdf_path, ese campo se usaba cuando se subia un solo archivo por registro
+    $data = $this->get_for_id( $tabla, $id);
+    if (!empty($data->pdf_path) && file_exists("$carpeta/$data->pdf_path") ) {
+      return "$carpeta/$data->pdf_path";
+    } else {
+      return '';
+    }
+  }
+
   public function insert_entry($table, $entry) {
   	return $this->db->insert($table, $entry);
   }

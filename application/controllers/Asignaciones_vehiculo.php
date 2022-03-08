@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Asignaciones_vehiculo extends CI_Controller {
-
+// Las asignaciones son los lugares a donde se asigna un vehiculo
 	public function __construct() {
 	  parent::__construct();
 	  date_default_timezone_set('America/Argentina/Buenos_Aires');

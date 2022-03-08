@@ -7,6 +7,7 @@ class Perfiles_Atributos_model extends CI_Model {
   public function __construct() {
     parent::__construct();
     $this->load->model('Atributos_Personas_model');
+    $this->load->model('Atributos_Vehiculos_model');
   }
 
   function get($attr = null, $valor = null){

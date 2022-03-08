@@ -149,23 +149,23 @@
 <!-- Fin modal baja de atributo del vehiculo -->
 
 <script>
-	var tabla_attr_vehiculos
-	var tabla_modelos_vehiculos
-	var url
-	var save_method
+	let tabla_attr_vehiculos
+	let tabla_modelos_vehiculos
+	let vehiculo_url, name_attr
+	let save_method
 
 
 	// Genero el option select , el type es el atributo que vamos a elegir, el cual puede ser marca, modelo o tipo vehiculo
 	// attr es attribute de la tabla
 	function print_attributes(select_id, type, attr = null, id = null) {
 		if (id !== null) {
-			url = "<?php echo base_url('Vehiculos/get_attr/');?>"+type+"/"+attr+"/"+id
+			vehiculo_url = "<?php echo base_url('Vehiculos/get_attr/');?>"+type+"/"+attr+"/"+id
 		} else {
-			url = "<?php echo base_url('Vehiculos/get_attr/');?>"+type
+			vehiculo_url = "<?php echo base_url('Vehiculos/get_attr/');?>"+type
 		}
 
 		$.ajax({
-			url: url,
+			url: vehiculo_url,
 			type: 'GET',
 			dataType: 'JSON',
 			success: function(response){
@@ -186,7 +186,7 @@
 
 	}
 
-	function save_attr_vehiculo(table, name_attr, marca_id) {
+	function save_attr_vehiculo(table, nombre, marca_id) {
 		if (table != 'modelo') {
 			marca_id = 'a'
 		}
@@ -196,7 +196,7 @@
 			type: 'POST',
 			cache: false,
 			data: {
-				nombre: name_attr,
+				nombre: nombre,
 				marca_id: marca_id
 			},
 			dataType: 'JSON',
@@ -235,17 +235,16 @@
 	}
 
 	function modal_delete_attr_vehiculo(type, id) {
-		let url
 		if (type = 'marca') {
 			$('#text-caution-delete-marca').show()
-			url = '<?php echo base_url("Vehiculos/get_attr/marca/id/");?>'+id
+			vehiculo_url = '<?php echo base_url("Vehiculos/get_attr/marca/id/");?>'+id
 		} else {
 			$('#text-caution-delete-marca').hide()
-			url = '<?php echo base_url("Vehiculos/get_attr/");?>'+type+'/id'+id
+			vehiculo_url = '<?php echo base_url("Vehiculos/get_attr/");?>'+type+'/id'+id
 		}
 
 		$.ajax({
-			url: url,
+			url: vehiculo_url,
 			type: 'GET',
 			dataType: "JSON",
 			success: function(resp)
@@ -266,30 +265,25 @@
 	function destroy_attr_vehiculo() {
 		let type = $('#modal_delete_attr_vehiculo #tipo_attr_vehiculo').val()
 		let id = $('#modal_delete_attr_vehiculo #id_attr_vehiculo').val()
-		let url
 
 		if (type == 'marca') {
-			url = '<?php echo base_url("Vehiculos/destroy_marca/");?>'+id
+			vehiculo_url = '<?php echo base_url("Vehiculos/destroy_marca/");?>'+id
 		} else {
-			url = '<?php echo base_url("Vehiculos/destroy/");?>'+id
-			console.log(url)
+			vehiculo_url = '<?php echo base_url("Vehiculos/destroy/");?>'+id
 		}
-
 		$.ajax({
-			url: url,
+			url: vehiculo_url,
 			type: "POST",
-			success: function(msg)
-			{
-				if (msg === 'ok') {
+			dataType: 'JSON',
+			success: function(response) {
+				if (response.status === 'success') {
 					tabla_attr_vehiculos.ajax.reload(null,false);
 					print_attributes(type, type)
 					$('#modal_delete_attr_vehiculo').modal('hide');
-				} else {
-					noty_alert( 'error' , 'No se pudo eliminar' )
 				}
+				noty_alert( response.status, response.msg )
 			},
-			error: function(jqXHR, textStatus, errorThrown)
-			{
+			error: function(jqXHR, textStatus, errorThrown) {
 				noty_alert( 'error' , 'No se pudo eliminar' )
 			}
 		});
@@ -305,14 +299,14 @@
 
 
 	function modal_crud_attr(nombre_attr){
-		url = "<?php echo base_url('Vehiculos/list_attr/');?>"+nombre_attr
+		vehiculo_url = "<?php echo base_url('Vehiculos/list_attr/');?>"+nombre_attr
 		$('.btnSave').prop( "disabled", false )
 		$('.alert-msg-vehiculos').html('')
 		$('.form-control').removeClass('error');
 		$('.error').empty();
 		if (nombre_attr == 'modelo') {
 			$('#form_modelo_vehiculo')[0].reset()
-			tabla_modelos_vehiculos.ajax.url(url).load()
+			tabla_modelos_vehiculos.ajax.url(vehiculo_url).load()
 			print_attributes('marca_attr_id','marca')
 			$('#marca_attr_id').select2({theme: 'bootstrap4', width: '70%'})
 			$('#form_modelo_vehiculo #tipo_attr').val(nombre_attr)
@@ -321,7 +315,7 @@
 			$('#modal_crud_attr_modelos_vehiculos').modal('show')
 		} else {
 			$('#form_attr_vehiculo')[0].reset()
- 			tabla_attr_vehiculos.ajax.url(url).load()
+ 			tabla_attr_vehiculos.ajax.url(vehiculo_url).load()
 			$('#tipo_attr').val(nombre_attr)
 			$('#label_name_attr').text('Nombre '+nombre_attr)
 			$('#btn_save_name_attr').text('Grabar '+nombre_attr)
@@ -357,7 +351,6 @@
 	function add_attr_vehiculo() {
 		save_method = 'create_attr_vehiculo'
 		var type = $('#tipo_attr').val()
-		var name_attr
 		var marca_id
 		if (type != 'modelo') {
 			name_attr = $('#name_attr').val()
@@ -434,9 +427,8 @@
 		e.preventDefault()
 		if (form_attr_vehiculo.valid()) {
 			save_method = 'create_attr_vehiculo'
-			var type = $('#tipo_attr').val()
-			var name_attr
-			var marca_id
+			let type = $('#tipo_attr').val()
+			let marca_id
 			if (type != 'modelo') {
 				name_attr = $('#name_attr').val()
 				$('#btn_save_name_attr').prop( "disabled", true )
@@ -455,9 +447,8 @@
 		e.preventDefault()
 		if (form_modelo_vehiculo.valid()) {
 			save_method = 'create_attr_vehiculo'
-			var type = $('#tipo_attr').val()
-			var name_attr
-			var marca_id
+			let type = $('#tipo_attr').val()
+			let marca_id
 
 			name_attr = $('#name_attr_modelo').val()
 			marca_id = $('#marca_attr_id option:selected').val()
@@ -483,12 +474,9 @@
 														})
 		
     $('#empresa').select2( { theme: 'bootstrap4', width: '70%' } )
-
     $('#marca').select2( { theme: 'bootstrap4', width: '70%' } )
-
     $('#modelo').select2({theme: 'bootstrap4', width: '70%'})
-
     $('#tipo').select2( { theme: 'bootstrap4', width: '70%' } )
-
+    $('#asignacion').select2( { theme: 'bootstrap4', width: '70%' } )
 	})
 </script>

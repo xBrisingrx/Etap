@@ -103,7 +103,7 @@ class Atributos_Personas_model extends CI_Model {
   }
 
   function insert_personalizado($entry){
-    if (!$this->exists($entry['atributo_id'], $entry['persona_id'])) {
+    if (!$this->existe($entry['atributo_id'], $entry['persona_id'])) {
       return $this->db->insert($this->table, $entry);
     } else {
       $data = $this->db->get_where( $this->table, array( 'persona_id'=> $entry['persona_id'], 'atributo_id'=> $entry['atributo_id'] ) )->row();
@@ -147,7 +147,7 @@ class Atributos_Personas_model extends CI_Model {
 
     $this->db->trans_start();
       foreach ($atributos_perfil as $attr) {
-        if ( !$this->exists($attr->attribute_id, $persona_id) ) {
+        if ( !$this->existe($attr->attribute_id, $persona_id) ) {
           $entry = array(
             'atributo_id' => $attr->attribute_id,
             'persona_id' => $persona_id,

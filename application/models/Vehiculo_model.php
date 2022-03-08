@@ -9,21 +9,53 @@ class Vehiculo_model extends CI_Model {
   }
 
   function get($attr = null, $value = null){
-	  if($attr != null and $value != null) {
-	    return $this->db->get_where('vehiculos', array($attr => $value, 'activo' => true))->result();
-	  } else {
-	      $this->db->select('vehiculos.id,vehiculos.interno, vehiculos.dominio, vehiculos.anio,marcas_vehiculos.nombre as marca,
-	                         modelos_vehiculos.nombre as modelo, tipos_vehiculos.nombre as tipo, vehiculos.n_chasis,
-	                         vehiculos.n_motor, vehiculos.cant_asientos, empresas.nombre as empresa, vehiculos.observaciones, vehiculos.patentamiento')
-	                  ->from($this->table)
-	                    ->join('marcas_vehiculos', 'marcas_vehiculos.id = vehiculos.marca_id')
-	                    ->join('modelos_vehiculos', 'modelos_vehiculos.id = vehiculos.modelo_id')
-	                    ->join('tipos_vehiculos', 'tipos_vehiculos.id = vehiculos.tipo_id')
-	                    ->join('empresas', 'empresas.id = vehiculos.empresa_id')
-	                      ->where('vehiculos.activo', true)
-	                        ->order_by('interno', 'ASC');
-	      return $this->db->get()->result();
-	  }
+    $this->db->select('vehiculos.id,vehiculos.interno, vehiculos.dominio, vehiculos.anio,marcas_vehiculos.nombre as marca,
+                       modelos_vehiculos.nombre as modelo, tipos_vehiculos.nombre as tipo, vehiculos.n_chasis,
+                       vehiculos.n_motor, vehiculos.cant_asientos, empresas.nombre as empresa, vehiculos.observaciones, vehiculos.patentamiento')
+                ->from($this->table)
+                  ->join('marcas_vehiculos', 'marcas_vehiculos.id = vehiculos.marca_id')
+                  ->join('modelos_vehiculos', 'modelos_vehiculos.id = vehiculos.modelo_id')
+                  ->join('tipos_vehiculos', 'tipos_vehiculos.id = vehiculos.tipo_id')
+                  ->join('empresas', 'empresas.id = vehiculos.empresa_id')
+                    ->where('vehiculos.activo', true);
+    if($attr != null and $value != null) {
+      $this->db->where( "vehiculos.$attr", $value );
+    }
+	 return $this->db->order_by('interno', 'ASC')->get()->result();
+  }
+
+  function get_ultimo_interno() {
+    $query = $this->db->select('*')
+                        ->from('vehiculos')
+                          ->where('activo', true)
+                            ->limit(1)
+                              ->order_by('interno', 'DESC')
+                                ->get()->row();
+    return $query->interno;
+  }
+
+  function get_info( $id = null ) {
+    if ( $id != null ) {
+        $this->db->select('vehiculos.id,vehiculos.interno, vehiculos.dominio, vehiculos.anio,marcas_vehiculos.nombre as marca,
+                           modelos_vehiculos.nombre as modelo, tipos_vehiculos.nombre as tipo, vehiculos.n_chasis,
+                           vehiculos.n_motor, vehiculos.cant_asientos, empresas.nombre as empresa, vehiculos.observaciones')
+                    ->from('vehiculos')
+                      ->join('marcas_vehiculos', 'marcas_vehiculos.id = vehiculos.marca_id')
+                      ->join('modelos_vehiculos', 'modelos_vehiculos.id = vehiculos.modelo_id')
+                      ->join('tipos_vehiculos', 'tipos_vehiculos.id = vehiculos.tipo_id')
+                      ->join('empresas', 'empresas.id = vehiculos.empresa_id')
+                        ->where('vehiculos.id', $id);
+        return $this->db->get()->row();
+    } else {
+      return 'no data';
+    }
+  }
+
+  function get_internos() {
+    // paso los internos a numeros, ese campo es un string
+    // return $this->db->query('SELECT (interno * 1) as interno, id FROM vehiculos ORDER BY interno')->result();
+    // al necesitar usar eltras en el interno no podemos usar lo de castear a integer
+    return $this->db->query('SELECT interno, id FROM vehiculos WHERE activo=true ORDER BY interno')->result();
   }
 
   function insert_entry($table, $value) {
@@ -117,5 +149,20 @@ class Vehiculo_model extends CI_Model {
     }
   }
 
+/* Marca */
+  function destroy_marca($id) {
+    $this->db->trans_start();
+    $this->db->query('UPDATE modelos_vehiculos SET activo = 0 WHERE marca_vehiculo_id = '.$id);
+    $this->db->query('UPDATE marcas_vehiculos SET activo = 0 WHERE id = '.$id);
+    $this->db->trans_complete();
+
+    if ($this->db->trans_status() == FALSE) {
+      $this->db->trans_rollback();
+      return false;
+    } else {
+      $this->db->trans_commit();
+      return true;
+    }
+  }
 
 }

@@ -2,7 +2,7 @@
 
 class Vehiculo_inactivo_model extends CI_Model {
 
-  public $table = 'vehiculos_inactivos';
+  protected $table = 'vehiculos_inactivos';
 
   public function __construct() {
     parent::__construct();
