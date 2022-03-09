@@ -9,6 +9,10 @@ class Seguros_Vehiculos extends CI_Controller {
 	  date_default_timezone_set('America/Argentina/Buenos_Aires');
 	}
 
+	function show($id){
+		echo json_encode( $this->DButil->get_for_id('seguros_vehiculos', $id) );
+	}
+
 	function list($id){
 		$seguros_vehiculo = $this->Seguros_Vehiculos_model->get_seguros_vehiculo($id);
 		$tipo = '2';
@@ -49,6 +53,7 @@ class Seguros_Vehiculos extends CI_Controller {
 			);
 			$entry = $this->security->xss_clean($entry);
 			if ( $this->Seguros_Vehiculos_model->insert_entry($entry) ) {
+				$estado_archivos['status'] = TRUE;
 				$folder = 'vehiculos/polizas';
 				$tabla_id = $this->DButil->get_last_id('seguros_vehiculos');
 				if ($_FILES['archivos']) {
@@ -70,27 +75,34 @@ class Seguros_Vehiculos extends CI_Controller {
 	}
 
 	function update(){
-		$this->_validate_rules(true);
+		$this->_validate_rules(TRUE);
 		if ( $this->form_validation->run() == FALSE ) {
 			echo json_encode(array('status' => 'error', 'msg' => validation_errors() )); 
 		} else {
-			$id = $this->input->post('id');
-			$nombre = $this->input->post('nombre');
-			if ( !$this->existe( $nombre, $id ) ) {
-				$entry = array(
-					'nombre' => $nombre,
-					'descripcion' => $this->input->post('descripcion'),
-					'updated_at' => date('Y-m-d H:i:s'),
-					'user_last_updated_id' => $this->session->userdata('id')
-				);
-				$entry = $this->security->xss_clean($entry);
-				if ($this->DButil->update_entry('aseguradoras', $id, $entry)) {
-					 echo json_encode(array('status' => 'success', 'msg' => 'Datos actualizados' )); 
-				} else {
-					echo json_encode(array('status' => 'error', 'msg' => 'No se pudieron actualizar los datos' )); 
-				}
+			$seguro_vehiculo_id = $this->input->post('id');
+			$entry = array(
+				'aseguradora_id' => $this->input->post('aseguradora_id'),
+				'fecha_alta' => $this->input->post('fecha_alta'),
+				'vencimiento' => $this->input->post('vencimiento'),
+				'poliza' => $this->input->post('poliza'),
+				'updated_at' => date('Y-m-d H:i:s'),
+	      'user_last_updated_id' => $this->session->userdata('id')
+			);
+			$entry = $this->security->xss_clean($entry);
+			if ( $this->Seguros_Vehiculos_model->update_entry( $seguro_vehiculo_id,$entry ) ) {
+				$estado_archivos['status'] = TRUE;
+				$folder = 'vehiculos/polizas';
+				$tabla_id = $seguro_vehiculo_id;
+				if (isset($_FILES['archivos'])) {
+          $estado_archivos = $this->Fileutil->subir_multiples_archivos( $_FILES['archivos'], $folder, 'seguros_vehiculos', $tabla_id, 'poliza' );
+        }
+        if ($estado_archivos['status'] === TRUE) {
+          echo json_encode( array( 'status' => 'success', 'msg' => 'Datos actualizados') );
+        } else {
+          echo json_encode( array( 'status' => 'error', 'msg' => $estado_archivos['errors'] ) );
+        }
 			} else {
-				echo json_encode(array('status' => 'existe', 'msg' => 'Esta aseguradora ya se encuentra registrada' )); 
+				echo json_encode( array( 'status' => 'error', 'msg' => 'No se pudieron actualizar los datos') );
 			}
 		}
 	}
@@ -103,12 +115,17 @@ class Seguros_Vehiculos extends CI_Controller {
 		}
 	}
 
-	function _validate_rules(){
+	function _validate_rules($edit = false){
 		$this->form_validation->set_rules('fecha_alta', 'Fecha alta', 'required');
 		$this->form_validation->set_rules('vencimiento', 'Fecha vencimiento', 'required');
 		$this->form_validation->set_rules('poliza', 'Poliza', 'required');
-		$this->form_validation->set_rules('vehiculo_id', 'Vehiculo', 'required');
 		$this->form_validation->set_rules('aseguradora_id', 'Aseguradora', 'required|callback_no_zero');
+		if ($edit) {
+			$this->form_validation->set_rules('id', 'ID', 'required');
+		} else {
+			// en una edicion no se puede cambiar el vehiculo solo la aseguradora asignada
+			$this->form_validation->set_rules('vehiculo_id', 'Vehiculo', 'required');
+		}
 	}
 
 	function no_zero($value) {

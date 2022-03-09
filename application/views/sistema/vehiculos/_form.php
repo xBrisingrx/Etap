@@ -123,14 +123,18 @@
 
 	  <div class="form-group row g-mb-10 asignacion-select">
 		  <label class="col-sm-2 col-form-label g-mb-10" for="asignacion">Asignar: </label>
-		  <div class="col-sm-6">
-			  <select class="custom-select sm-9" id="asignacion" name="asignacion">
+		  <div class="col-4">
+			  <select class="custom-select sm-6" id="asignacion" name="asignacion">
 			  	<option value="" selected >Asignar unidad</option>
 			  	<?php foreach ($asignaciones as $a): ?>
 			    	<option value="<?php echo $a->id;?>"><?php echo $a->nombre;?></option>
 			    <?php endforeach ?>
 			  </select>
 		  </div>
+		 	<label for="fecha_alta_asignacion" class="col-2 col-form-label">Fecha alta</label>
+      <div class="col-3">
+        <input class="form-control rounded-0 form-control-md" type="date" id="fecha_alta_asignacion" name="fecha_alta_asignacion">
+      </div>
 	  </div>
 
 	  <!-- Textarea observaciones -->
@@ -138,7 +142,7 @@
 	    <label class="col-sm-2 col-form-label g-mb-10" for="observaciones">Observaciones</label>
 	    <div class="col-sm-9">
 	    	<textarea id="observaciones" name="observaciones" class="form-control form-control-md u-textarea-expandable rounded-0" 
-	    						rows="3" placeholder="Observaciones" value=''>
+	    						rows="3" placeholder="Observaciones" value="">
 	    	</textarea>
 	    </div>
 	  </div>

@@ -131,6 +131,8 @@
 
 <?php $this->load->view('sistema/documentos/_modal_seguros_vehiculo') ?>
 
+<?php $this->load->view('sistema/documentos/_modal_asignaciones_vehiculo') ?>
+
 <div class="modal fade" id="modal_eliminar_renovacion_atributo" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -264,7 +266,7 @@
 <?php $this->load->view('sistema/documentos/_documentos_js') ?>
 
 <script>
-  let tabla_seguros_vehiculo , vehiculo_id
+  let tabla_seguros_vehiculo, tabla_asignaciones_vehiculo, form_asignacion_vehiculo
 
   function modal_seguros_vehiculos( vehiculo_id ) {
     document.querySelector('#form_seguro_vehiculo #vehiculo_id').value =  vehiculo_id
@@ -278,7 +280,7 @@
   document.getElementById('form_seguro_vehiculo').addEventListener('submit', function(e) {
     e.preventDefault()
     let form_data = new FormData()
-    vehiculo_id = document.querySelector('#form_seguro_vehiculo #vehiculo_id').value
+    let vehiculo_id = document.querySelector('#form_seguro_vehiculo #vehiculo_id').value
     form_data.append('vehiculo_id', parseInt(vehiculo_id) )
     form_data.append('aseguradora_id', parseInt(document.querySelector('#form_seguro_vehiculo #aseguradora_id').value) )
     form_data.append('poliza', document.querySelector('#form_seguro_vehiculo #poliza').value )
@@ -291,7 +293,6 @@
       })
       .then(response => response.json())
       .then(response => {
-        console.warn(response)
         if (response.status === 'success') {
           noty_alert( 'success' , response.msg )
           $('#aseguradora_id').val(0).trigger('change')
@@ -305,7 +306,108 @@
       .catch(console.log)
   })
 
-// MODAL IMAGENES
+  function modal_edit_aseguradora(seguro_vehiculo_id){
+    clean_form('form_editar_seguros_vehiculo')
+    fetch(`${base_url}Seguros_Vehiculos/show/${seguro_vehiculo_id}`)
+      .then(response => response.json() )
+      .then(response => {
+        document.querySelector('#form_editar_seguros_vehiculo #seguro_vehiculo_id').value = response.id
+        document.querySelector('#form_editar_seguros_vehiculo #poliza').value = response.poliza
+        document.querySelector('#form_editar_seguros_vehiculo #fecha_alta_seguro_vehiculo').value = response.fecha_alta
+        document.querySelector('#form_editar_seguros_vehiculo #fecha_vencimiento_seguro_vehiculo').value = response.vencimiento
+        document.querySelector('#form_editar_seguros_vehiculo #aseguradora_id').value = response.aseguradora_id
+      })
+    $('#modal_editar_seguros_vehiculo').modal('show')
+  }
+
+  document.getElementById('form_editar_seguros_vehiculo').addEventListener('submit', (e) => {
+    e.preventDefault()
+    let form_data = new FormData()
+    form_data.append('id', parseInt( document.querySelector('#form_editar_seguros_vehiculo #seguro_vehiculo_id').value  ) )
+    form_data.append('aseguradora_id', parseInt(document.querySelector('#form_editar_seguros_vehiculo #aseguradora_id').value) )
+    form_data.append('poliza', document.querySelector('#form_editar_seguros_vehiculo #poliza').value )
+    form_data.append('fecha_alta', document.querySelector('#form_editar_seguros_vehiculo #fecha_alta_seguro_vehiculo').value )
+    form_data.append('vencimiento', document.querySelector('#form_editar_seguros_vehiculo #fecha_vencimiento_seguro_vehiculo').value )
+    agrupar_archivos( form_data, document.querySelector('#form_editar_seguros_vehiculo #archivos_seguro') )
+    fetch(`${base_url}Seguros_Vehiculos/update`, {
+        method: 'POST',
+        body: form_data
+      })
+      .then(response => response.json())
+      .then(response => {
+        if (response.status === 'success') {
+          noty_alert( 'success' , response.msg )
+          $('#modal_editar_seguros_vehiculo').modal('hide')
+          tabla_seguros_vehiculo.ajax.reload(null,false)
+        } else {
+          noty_alert( 'error' , response.msg )
+        }
+      })
+      .catch(console.log)
+  })
+
+  function modal_asignaciones_vehiculos() {
+    clean_form('form_asignacion_vehiculo')
+    $('#asignacion_id').val(0).trigger('change')
+    tabla_asignaciones_vehiculo.ajax.url(`${base_url}Asignaciones_vehiculo/list_asignaciones_vehiculo/${data_id}`).load()
+    tabla_asignaciones_vehiculo.ajax.reload(null,false)
+    $('#modal_asignaciones_vehiculo').modal('show')
+  }
+
+  document.getElementById('form_asignacion_vehiculo').addEventListener('submit', (e) => {
+    e.preventDefault()
+    let asignacion_id = parseInt( document.getElementById('asignacion_id').value )
+    if (asignacion_id != 0) {
+      let form_data = new FormData()
+      form_data.append("vehiculo_id", data_id)
+      form_data.append("asignacion_id", asignacion_id)
+      form_data.append("fecha_alta", document.getElementById('fecha_alta_asignacion_vehiculo').value )
+      agrupar_archivos( form_data, document.getElementById('archivos_asignacion') )
+      fetch( `${base_url}Asignaciones_vehiculo/asignar_a_vehiculo`, {
+        method: 'POST',
+        body: form_data
+      })
+      .then(response => response.json() )
+      .then(response => {
+        if (response.status === 'success') {
+          reload_tabla(tabla_asignaciones_vehiculo, `${base_url}Asignaciones_vehiculo/list_asignaciones_vehiculo/${data_id}`)
+          clean_form('form_asignacion_vehiculo')
+          $('#asignacion_id').val(0).trigger('change')
+        }
+        noty_alert( response.status , response.msg )
+      })
+      .catch(error => console.log('error: ' + error))
+    } else {
+      noty_alert('info', 'Debe seleccionar un lugar de asignación')
+    }
+  })
+
+  function modal_baja_asignacion_vehiculo(asignacion_vehiculo_id){
+    clean_form('form_eliminar_asignacion')
+    document.getElementById('vehiculo_asignacion_id').value = asignacion_vehiculo_id
+    $('#modal_eliminar_asignacion').modal('show')
+  }
+
+  document.getElementById('form_eliminar_asignacion').addEventListener('submit', (e) => {
+    e.preventDefault()
+    let form_data = new FormData()
+    form_data.append("id", parseInt( document.querySelector('#form_eliminar_asignacion #vehiculo_asignacion_id').value ) )
+    form_data.append("fecha_baja", document.querySelector('#form_eliminar_asignacion #fecha_baja_asignacion_vehiculo').value )
+    fetch( `${base_url}Asignaciones_vehiculo/baja_asignar_vehiculo`, {
+      method: 'POST',
+      body: form_data
+    })
+    .then(response => response.json() )
+    .then(response => {
+      if (response.status === 'success') {
+        reload_tabla(tabla_asignaciones_vehiculo, `${base_url}Asignaciones_vehiculo/list_asignaciones_vehiculo/${data_id}`)
+        $('#modal_eliminar_asignacion').modal('hide')
+      }
+      noty_alert( response.status , response.msg )
+    })
+    .catch(error => console.log('error: ' + error))
+  })
+  /* MODAL IMAGENES */ 
   function modal_imagenes( vehiculo_id ) {
     let url_image
     clean_form('form_agregar_imagenes')
@@ -424,11 +526,15 @@
       })
     })
     tabla_seguros_vehiculo = $('#tabla_seguros_vehiculo').DataTable({
-                                  language: { url: "<?php echo base_url('assets/vendor/datatables/spanish.json'); ?>"},
-                                  "ordering": false,
-                                  })
+                                  language: { url: datatables_lang},
+                                  "ordering": false})
+    tabla_asignaciones_vehiculo = $('#tabla_asignaciones_vehiculo').DataTable({
+                                  language: { url: datatables_lang},
+                                  "ordering": false})
+
     $('#vehiculo_seleccionado').select2( { theme: 'bootstrap4', width: '50%' } )
     $('#aseguradora_id').select2( { theme: 'bootstrap4', width: '50%' } )
+    $('#asignacion_id').select2( { theme: 'bootstrap4', width: '50%' } )
   } )
 </script>
 

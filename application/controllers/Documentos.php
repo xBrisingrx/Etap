@@ -39,6 +39,7 @@ class Documentos extends CI_Controller {
     $data['internos'] = $this->Vehiculo_model->get_internos();
     $data['atributos'] = $this->Atributo_model->get('tipo', 2);
     $data['aseguradoras'] = $this->DButil->get('aseguradoras', array( 'activo' => true ));
+    $data['asignaciones'] = $this->DButil->get('asignaciones_vehiculo', array( 'activo' => true ));
     $title['title'] = 'Documentos';
     $this->load->view('layout/header',$title);
     $this->load->view('layout/nav');
@@ -94,6 +95,8 @@ class Documentos extends CI_Controller {
           onclick="modal_imagenes('."'".$id."'".')" ><i class="fa fa-eye"></i></button>', '1' );
         $data[] = array('Seguros',' ',' ',' ',' ',' ','<button class="btn u-btn-indigo btn-xs" title="Listar seguros" 
           onclick="modal_seguros_vehiculos('."'".$id."'".')" ><i class="fa fa-shield"></i></button>', '1' );
+        $data[] = array('Asignaciones',' ',' ',' ',' ',' ','<button class="btn u-btn-teal btn-xs" title="Listar asignaciones" 
+          onclick="modal_asignaciones_vehiculos('."'".$id."'".')" ><i class="fa fa-location-arrow"></i></button>', '1' );
       }
     } else {
       $data[] = array(' ',' ',' ',' ',' ',' ',' ',' ');

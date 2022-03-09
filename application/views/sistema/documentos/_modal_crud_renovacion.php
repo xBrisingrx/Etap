@@ -146,7 +146,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Confirma que quiere eliminar resta renovacion?</p>
+        <p>Confirma que quiere eliminar esta renovacion?</p>
         <!-- Si el cargar el formulario retorna errores los imprimo en este div -->
         <div id="msg-errors"></div>
         <?php echo form_open('', array('id' => 'form_eliminar_renovacion' )) ?>

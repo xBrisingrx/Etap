@@ -22,6 +22,13 @@ class Migration_Add_vehiculos_asignaciones extends CI_Migration {
         'constraint' => 11,
         'unsigned' => TRUE
       ),
+      'fecha_alta' => array(
+        'type' => 'date'
+      ),
+      'fecha_baja' => array(
+        'type' => 'date',
+        'null' => true
+      ),
       'created_at datetime default current_timestamp',
       'updated_at datetime default current_timestamp on update current_timestamp',
       'user_created_id' => array(

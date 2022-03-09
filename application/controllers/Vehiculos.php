@@ -68,14 +68,15 @@ class Vehiculos extends CI_Controller {
       );
       $vehiculo = $this->security->xss_clean($vehiculo);
       if ($this->Vehiculo_model->insert_entry('vehiculos', $vehiculo)) {
+        $last_id = $this->Vehiculo_model->get_last_id();
         if ( !empty( $_FILES['imagenes']['name'][0] ) ) {
-          $last_id = $this->Vehiculo_model->get_last_id();
           $msg_images = $this->upload_images( $_FILES['imagenes'], $last_id );
         }
         if ( !empty( $this->input->post('asignacion') ) ) {
           $entry = array( 
-            'vehiculo_id' => $last_id, 
-            'asignacion_id' => $this->input->post('asignacion'), 
+            'vehiculo_id' => $last_id,
+            'asignacion_id' => $this->input->post('asignacion'),
+            'fecha_alta' => $this->input->post('fecha_alta_asignacion'),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
             'user_created_id' => $this->session->userdata('id'),

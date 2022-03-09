@@ -190,7 +190,6 @@
   /* Archivos */
   function modal_archivos( tipo, registro_id, tabla = null ) {
     let url_archivo
-    console.info(tabla)
     clean_form('form_agregar_archivos')
     $('#galeria_archivos').html('')
     $('#modal_archivos #registro_id').val( registro_id )

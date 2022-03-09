@@ -149,10 +149,9 @@
 <!-- Fin modal baja de atributo del vehiculo -->
 
 <script>
-	let tabla_attr_vehiculos
-	let tabla_modelos_vehiculos
-	let vehiculo_url, name_attr
-	let save_method
+	let tabla_attr_vehiculos,tabla_modelos_vehiculos
+	let vehiculo_url, name_attr,save_method
+	let form_attr_vehiculo,form_modelo_vehiculo,form_vehiculo
 
 
 	// Genero el option select , el type es el atributo que vamos a elegir, el cual puede ser marca, modelo o tipo vehiculo
@@ -339,6 +338,7 @@
 		data.append('asientos', document.getElementById('asientos').value)
 		data.append('observaciones', document.getElementById('observaciones').value)
 		data.append('asignacion', document.getElementById('asignacion').value)
+		data.append('fecha_alta_asignacion', document.getElementById('fecha_alta_asignacion').value)
 
 		let total_files = document.getElementById('imagenes').files.length
     for (let index = 0; index < total_files; index++) {
@@ -365,43 +365,26 @@
 		save_attr_vehiculo(type, name_attr, marca_id)
 	}
 
-	document.getElementById('form_alta_vehiculo').addEventListener('submit', function(e){
-		e.preventDefault()
-		fetch( "<?php echo base_url('Vehiculos/create')?>", {
-			method: 'POST',
-      body: agrupar_datos()
-		} )
-		.then(response => response.json() )
-    .then(response => {
-    	if (response.status === 'success') {
-    		window.location.href = '<?php echo base_url('Vehiculos'); ?>'
-    	} else {
-    		noty_alert( response.status, response.msg )
-    	}
-    } )
-    .catch(error => noty_alert( 'error', 'No se pudo registrar el vehiculo' ) )
-	})
-
 	$(document).on('ready', function () {
 
 	$.validator.addMethod("alfanumOespacio", function(value, element) {
 	        return /^[a-z\- áéíóúüñ0-9]*$/i.test(value);
 	    }, "Ingrese sólo letras y numeros.");
 
-	let form_attr_vehiculo = $('.form_attr_vehiculo').validate({
+	form_attr_vehiculo = $('.form_attr_vehiculo').validate({
 															rules: {
 																'nombre_attr': { required: true	}
 															}
 														});
 
-	let form_modelo_vehiculo = $('#form_modelo_vehiculo').validate({
+	form_modelo_vehiculo = $('#form_modelo_vehiculo').validate({
 															rules: {
 																'name_attr_modelo': { required: true	},
 																'marca_attr_id': { required: true	}
 															}
 														})
 
-	let form_vehiculo = $('#form_alta_vehiculo').validate({
+	form_vehiculo = $('#form_alta_vehiculo').validate({
 												rules: {
 													'interno': { alfanumOespacio: true, 
 																			 required: true,
@@ -414,13 +397,44 @@
 		                                          }
 		                                      }
 		                                    } 
-																			}
+																			},
+													'fecha_alta_asignacion': {
+														required: function (element){
+				                      return $('#asignacion').val() != ''
+				                    }
+													},
+													'dominio': {
+														required: true
+													}
 												},
 												messages: {
 													'interno': {
 														remote: 'Este numero de interno pertenece a otro vehiculo'
 													}
 												}
+	})
+
+	document.getElementById('form_alta_vehiculo').addEventListener('submit', function(e){
+		e.preventDefault()
+		e.stopPropagation()
+		if( form_vehiculo.valid() ){
+			console.log( `${form_vehiculo.valid()} =>` )
+			fetch( "<?php echo base_url('Vehiculos/create')?>", {
+				method: 'POST',
+	      body: agrupar_datos()
+			} )
+			.then(response => response.json() )
+	    .then(response => {
+	    	if (response.status === 'success') {
+	    		window.location.href = '<?php echo base_url('Vehiculos'); ?>'
+	    	} else {
+	    		noty_alert( response.status, response.msg )
+	    	}
+	    } )
+	    .catch(error => noty_alert( 'error', 'No se pudo registrar el vehiculo' ) )
+		} else {
+			console.info('no valid')
+		}
 	})
 
 	$('#form_attr_vehiculo').submit(function(e){
