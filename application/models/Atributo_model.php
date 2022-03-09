@@ -21,6 +21,25 @@ class Atributo_model extends CI_Model {
     return $this->db->get()->result();
   }
 
+  function get_nombre_id( $tipo, $ids = null ) {
+    $atributo_ids = $ids;
+
+    $this->db->select('id, nombre')
+               ->from($this->table)
+                 ->where('activo', TRUE)
+                 ->where('tipo', $tipo);
+
+    if ( $ids != null ) {
+      $this->db->where('id = ', $ids[0]);
+      for ($i=1; $i < count($ids) ; $i++) { 
+        $this->db->or_where('id = ', $ids[$i]);
+      }
+    }
+
+    $this->db->order_by('nombre', 'asc');
+    return $this->db->get()->result();
+  }
+
   function insert_entry($attribute) {
     return $this->db->insert('atributos', $attribute);
   }
