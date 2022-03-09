@@ -4,7 +4,7 @@
       <a href="<?php echo base_url('Personas/new');?>" class="btn btn-success justify-content-end mb-2">Nueva persona</a>
     <?php } ?>
     <a href="<?php echo base_url('Personas_Inactivas');?>" class="btn btn-info justify-content-start mb-2">Ver personal inactivo</a>
-    <button type="button" class="btn btn-primary justify-content-start mb-2" data-toggle="modal" data-target="#modal_excel" > Exportar a excel </button>
+    <!-- <button type="button" class="btn btn-primary justify-content-start mb-2" data-toggle="modal" data-target="#modal_excel" > Exportar a excel </button> -->
 
   <div class="card g-brd-darkpurple rounded-0 g-mb-30">
     <h3 class="card-header g-bg-darkpurple g-brd-transparent g-color-white g-font-size-16 rounded-0 mb-2">
@@ -191,47 +191,67 @@
         </button>
       </div>
       <div class="modal-body">
-          <form id="form_descargar_excel" method="POST" action="<?php echo base_url('Informes/excel_personas');?>">
-            <!-- motivo baja input -->
-            <div class="form-group row g-mb-5">
-              <label class="col-sm-2 col-form-label g-mb-5">Estado </label>
-              <select id="estado_persona" name="estado_persona" class="form-control">
-                <option value="1">Activos</option>
-<!--                 <option value="0">Inactivos</option>
-                <option value="2">Inactivos sin motivo</option> -->
-              </select>
-            </div>
+        <?php echo form_open('Informes/excel_personas', 
+          array( 'id'=>'form_descargar_excel','class'=>'form_new_person g-brd-around g-brd-gray-light-v4 g-pa-10 g-mb-30'));?>
+          <!-- motivo baja input -->
+          <div class="form-group row g-mb-5">
+            <label class="col-sm-2 col-form-label g-mb-5">Estado </label>
+            <select id="estado_persona" name="estado_persona" class="form-control">
+              <option value="1">Activos</option>
+              <option value="0">Inactivos</option>
+            </select>
+          </div>
 
-            <div class="form-group row g-mb-5">
-              <label class="col-sm-2 col-form-label g-mb-5 w-80">Empresa </label>
-              <select id="empresa_persona" name="empresa_persona" class="custom-select  w-80 col-sm-8">
-                <option value="0"> Todas las empresas </option>
-                <?php foreach ($empresas as $e): ?>
-                  <option value="<?php echo $e->id ?>" > <?php echo $e->nombre ?> </option>
-                <?php endforeach ?>
-              </select>
-            </div>
+          <div class="form-group row g-mb-5">
+            <label class="col-sm-2 col-form-label g-mb-5 w-80">Empresa </label>
+            <select id="empresa_persona" name="empresa_persona" class="custom-select  w-80 col-sm-8">
+              <option value="0"> Todas las empresas </option>
+              <?php foreach ($empresas as $e): ?>
+                <option value="<?php echo $e->id ?>" > <?php echo $e->nombre ?> </option>
+              <?php endforeach ?>
+            </select>
+          </div>
 
-            <div class="form-group row g-mb-5">
-              <label class="col-sm-2 col-form-label g-mb-5 w-80">Perfil </label>
-              <select id="perfil_persona" name="perfil_persona" class="custom-select  w-80 col-sm-8">
-                <option value="0"> Todos los perfiles </option>
-                <?php foreach ($perfiles as $p): ?>
-                  <option value="<?php echo $p->id ?>" > <?php echo $p->nombre ?> </option>
-                <?php endforeach ?>
-              </select>
-            </div>
+          <div class="form-group row g-mb-5">
+            <label class="col-sm-2 col-form-label g-mb-5 w-80">Perfil </label>
+            <select id="perfil_persona" name="perfil_persona" class="custom-select  w-80 col-sm-8">
+              <option value="0"> Todos los perfiles </option>
+              <?php foreach ($perfiles as $p): ?>
+                <option value="<?php echo $p->id ?>" > <?php echo $p->nombre ?> </option>
+              <?php endforeach ?>
+            </select>
+          </div>
 
-            <button type="submit" class="btn u-btn-primary" >Descargar</button>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-          </form>
+          <button type="submit" class="btn u-btn-primary" >Descargar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        </form>
       </div>
     </div>
   </div>
 </div>
 <!-- Fin modal exportar a excel -->
 <script type="text/javascript">
-  var form_baja_persona = $('#form_baja_persona')
+  let form_baja_persona = $('#form_baja_persona')
+
+  document.getElementById('form_descargar_excel').addEventListener('submit', (e)=>{
+    e.preventDefault()
+    $.ajax({
+      url: `${base_url}Informes/listado_personas`,
+      type: 'GET',
+      data: {
+        activas : $('#estado_persona').val(),
+        empresa : $('#empresa_persona').val(),
+        perfil : $('#perfil_persona').val()
+      },
+      success: function( msg ) {
+        $('#modal_excel').modal('hide')
+        noty_alert( 'success' , 'Excel generado con exito' )
+      },
+      error: function( msg ) {
+        noty_alert( 'error' , 'No se pudo generar el excel' )
+      }
+    })
+  })
 
   $(document).ready(function() {
 
@@ -291,49 +311,4 @@
       }
     })
   } // End destroy method
-
-  function exportar_excel()
-  {
-    $.ajax({
-      url: '<?php echo base_url("Personas/exportar_excel");?>',
-      type: 'POST',
-      data: {
-        activas : $('#estado_persona').val(),
-        empresa : $('#empresa_persona').val(),
-        perfil : $('#perfil_persona').val()
-      },
-      success: function( msg ) {
-        alert('ajax')
-        $('#modal_excel').modal('hide')
-        console.log(msg)
-        noty_alert( 'success' , 'Excel generado con exito' )
-      },
-      error: function( msg ) {
-        $('#modal_excel').modal('hide')
-        noty_alert( 'error' , 'No se pudo generar el excel' )
-      }
-    })
-  }
-
-    $( "#submit_form_excel" ).on('click', function( e ) {
-      $.ajax({
-        url: '<?php echo base_url("Personas/exportar_excel");?>',
-        type: 'POST',
-        data: {
-          activas : $('#estado_persona').val(),
-          empresa : $('#empresa_persona').val(),
-          perfil : $('#perfil_persona').val()
-        },
-        success: function( msg ) {
-          
-          $('#modal_excel').modal('hide')
-          noty_alert( 'success' , 'Excel generado con exito' )
-        },
-        error: function( msg ) {
-          $('#modal_excel').modal('hide')
-          noty_alert( 'error' , 'No se pudo generar el excel' )
-        }
-      })
-      e.preventDefault();
-    })
 </script>

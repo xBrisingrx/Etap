@@ -88,15 +88,13 @@ class Persona_model extends CI_Model {
     return ( isset( $query->n_legajo ) ) ? $query->n_legajo : 0;
   }
 
-  function get_data_excel( $filtros ) {
-    $query = $this->db->select('personas.nombre,personas.n_legajo,personas.apellido,personas.activo, empresas.nombre as empresa, 
-                                perfiles.nombre as perfil, perfiles_personas.perfil_id, personas.fecha_inicio_actividad, 
-                                personas.fecha_baja, motivos_baja.motivo as motivo_baja')
+  function get_data_excel( $filtros ) { /* obtengo la informacion para el excel de listado de personas */
+    $query = $this->db->select('concat(personas.nombre,personas.apellido) as nombre_completo,personas.n_legajo,personas.activo, empresas.nombre as empresa, 
+                                perfiles.nombre as perfil, perfiles_personas.perfil_id, personas.fecha_inicio_actividad')
                         ->from('personas')
                           ->join('empresas', 'personas.empresa_id = empresas.id')
                           ->join('perfiles_personas', 'personas.id = perfiles_personas.persona_id', 'left')
                           ->join('perfiles', 'perfiles.id = perfiles_personas.perfil_id', 'left')
-                          ->join('motivos_baja', 'motivos_baja.id = personas.motivo_baja_id')
                             ->where('personas.activo', $filtros['activo']);
     if ( $filtros['empresa_id'] != 0 ) {
       $query = $this->db->where( 'empresas.id', $filtros['empresa_id']);
