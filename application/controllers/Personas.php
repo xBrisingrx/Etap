@@ -6,7 +6,7 @@ class Personas extends CI_Controller {
 	function __construct() {
 	  parent::__construct();
 	  date_default_timezone_set('America/Argentina/Buenos_Aires');
-	  $this->load->model(array('Empresa_model', 'Persona_model','Motivos_baja_model'));
+	  $this->load->model(array('Empresa_model', 'Persona_model','Motivos_baja_model', 'Perfil_model'));
     $this->load->library('upload');
     if ( empty( $this->session->nombre_usuario ) ) {
 	  	redirect('Login');
@@ -18,7 +18,8 @@ class Personas extends CI_Controller {
 		$data = array(
 				'personas' => $this->Persona_model->getData('activo', true),
 				'empresas' => $this->Empresa_model->get('tipo', 1),
-				'motivos_baja' => $this->Motivos_baja_model->get('tipo', 1)
+				'motivos_baja' => $this->Motivos_baja_model->get('tipo', 1),
+				'perfiles' => $this->Perfil_model->get('tipo', 1)
 		);
 		$this->load->view('layout/header',$title);
 		$this->load->view('layout/nav');
@@ -210,4 +211,6 @@ class Personas extends CI_Controller {
       }
     } // end if form_validation
   } // end destroy
+
+  
 }
