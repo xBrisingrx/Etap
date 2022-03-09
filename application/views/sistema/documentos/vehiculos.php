@@ -269,6 +269,7 @@
   function modal_seguros_vehiculos( vehiculo_id ) {
     document.querySelector('#form_seguro_vehiculo #vehiculo_id').value =  vehiculo_id
     clean_form('form_seguro_vehiculo')
+    $('#aseguradora_id').val(0).trigger('change')
     tabla_seguros_vehiculo.ajax.url(`${base_url}Seguros_Vehiculos/list/${vehiculo_id}`).load()
     tabla_seguros_vehiculo.ajax.reload(null,false)
     $('#modal_seguros_vehiculo').modal('show')
@@ -293,6 +294,7 @@
         console.warn(response)
         if (response.status === 'success') {
           noty_alert( 'success' , response.msg )
+          $('#aseguradora_id').val(0).trigger('change')
           clean_form('form_seguro_vehiculo')
           tabla_seguros_vehiculo.ajax.url(`${base_url}Seguros_Vehiculos/list/${vehiculo_id}`).load()
           tabla_seguros_vehiculo.ajax.reload(null,false)
@@ -398,8 +400,6 @@
     }
   })
 // END MODAL IMAGENES
-  
-
   $(document).on('ready', function () {
     clean_form('form_info_vehiculo')
     $('#vehiculo_seleccionado').on('change', function(){
@@ -423,14 +423,12 @@
         }
       })
     })
-
     tabla_seguros_vehiculo = $('#tabla_seguros_vehiculo').DataTable({
                                   language: { url: "<?php echo base_url('assets/vendor/datatables/spanish.json'); ?>"},
                                   "ordering": false,
                                   })
-
     $('#vehiculo_seleccionado').select2( { theme: 'bootstrap4', width: '50%' } )
-
+    $('#aseguradora_id').select2( { theme: 'bootstrap4', width: '50%' } )
   } )
 </script>
 
