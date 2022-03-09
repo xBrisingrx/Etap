@@ -30,8 +30,7 @@
           <div class="form-group row g-mb-10">
             <label class="col-sm-2 col-form-label g-mb-10" for="poliza">Poliza</label>
             <div class="col-sm-9">
-              <input id="poliza" name="poliza"
-                     class="form-control u-form-control rounded-0" type="text" value="">
+              <input id="poliza" name="poliza" class="form-control u-form-control rounded-0" type="text" value="" required>
             </div>
           </div>
 
