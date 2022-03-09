@@ -165,4 +165,12 @@ class Vehiculo_model extends CI_Model {
     }
   }
 
+  /* obtengo las asignaciones que tenga un vehiculo */
+  function get_asginaciones_vehiculo($vehiculo_id){
+    return $this->db->select('va.id, va.fecha_alta, va.fecha_baja,va.asignacion_id ,va.activo,asignaciones_vehiculo.nombre')
+                      ->from('vehiculos_asignaciones as va')
+                        ->join('asignaciones_vehiculo', 'asignaciones_vehiculo.id = va.asignacion_id')
+                          ->where('va.vehiculo_id', $vehiculo_id)->get()->result();
+  }
+
 }
