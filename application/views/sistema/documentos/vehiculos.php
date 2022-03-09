@@ -77,7 +77,6 @@
     <i class="fa fa-gear g-mr-5"></i>
     Perfiles asignados al vehículo
   </h3>
-
   <div class="table-responsive px-2 pb-2">
     <table id="tabla_perfiles" class="table table-hover u-table--v1 mb-0">
       <thead>
@@ -87,10 +86,7 @@
           <th>Fecha hasta</th>
         </tr>
       </thead>
-
-      <tbody>
-        <!-- Ajax call -->
-      </tbody>
+      <tbody><!-- Ajax call --></tbody>
     </table>
   </div>
 </div>
@@ -297,10 +293,9 @@
         console.warn(response)
         if (response.status === 'success') {
           noty_alert( 'success' , response.msg )
-          $('#form_renovacion_atributo')[0].reset()
+          clean_form('form_seguro_vehiculo')
           tabla_seguros_vehiculo.ajax.url(`${base_url}Seguros_Vehiculos/list/${vehiculo_id}`).load()
           tabla_seguros_vehiculo.ajax.reload(null,false)
-          $('#modal_editar_renovacion').modal('hide')
         } else {
           noty_alert( 'error' , response.msg )
         }
@@ -311,6 +306,7 @@
 // MODAL IMAGENES
   function modal_imagenes( vehiculo_id ) {
     let url_image
+    clean_form('form_agregar_imagenes')
     $('#image_galery').html('')
     $('#modal_imagenes #vehiculo_id').val( vehiculo_id )
     $.ajax({
@@ -382,7 +378,7 @@
         success: function( resp ){
           if ( resp.status == 'success' ) {
             noty_alert('success', 'Imagenes agregadas')
-            $('#form_agregar_imagenes')[0].reset()
+            clean_form('form_agregar_imagenes')
             let url_imagen, imagen_id
             for(let i = 0; i < resp.imagenes.length; i++) {
               url_imagen = `${base_url}${resp.imagenes[i].path}`
@@ -406,7 +402,6 @@
 
   $(document).on('ready', function () {
     clean_form('form_info_vehiculo')
-
     $('#vehiculo_seleccionado').on('change', function(){
       data_id = $('#vehiculo_seleccionado option:selected').val()
       $.ajax({
