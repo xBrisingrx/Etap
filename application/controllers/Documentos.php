@@ -119,7 +119,11 @@ class Documentos extends CI_Controller {
       }
       $row[] = '<button class="btn btn-sm u-btn-purple g-mr-5 g-mb-5" title="Ver archivos" onclick="modal_archivos('."'".$tipo."',".$r->id.')" ><i class="fa fa-file"></i></button>';
       $datos_editar = $r->id.','.$r->fecha_renovacion.','.$r->fecha_vencimiento;
-      $row[] = '<button class="btn btn-sm u-btn-orange g-mr-5 g-mb-5" title="Editar" onclick="editar_renovacion('."'".$datos_editar."'".')" ><i class="fa fa-edit"></i></button> <button class="btn btn-sm u-btn-red g-mr-5 g-mb-5" title="Eliminar" onclick="modal_eliminar_renovacion('."'".$r->id."'".')" ><i class="fa fa-trash"></i></button>';
+      if ($r->tiene_vencimiento) {
+        $row[] = '<button class="btn btn-sm u-btn-orange g-mr-5 g-mb-5" title="Editar" onclick="editar_renovacion('."'".$datos_editar."'".')" ><i class="fa fa-edit"></i></button> <button class="btn btn-sm u-btn-red g-mr-5 g-mb-5" title="Eliminar" onclick="modal_eliminar_renovacion('."'".$r->id."'".')" ><i class="fa fa-trash"></i></button>';
+      } else {
+        $row[] = '<button class="btn btn-sm u-btn-red g-mr-5 g-mb-5" title="Eliminar" onclick="modal_eliminar_renovacion('."'".$r->id."'".')" ><i class="fa fa-trash"></i></button>';
+      }
       $data[] = $row;
     }
     echo json_encode(array("data" => $data));
