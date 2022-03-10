@@ -199,7 +199,8 @@
       dataType: 'JSON',
       success: function( response ) {
         if (response.archivo !== '') {
-          dibujar_archivo( 'galeria_archivos', '0', response.archivo)
+          url_archivo = `${base_url}${response.archivo}`
+          dibujar_archivo( 'galeria_archivos', '0', url_archivo)
         }
         $(response.archivos).each(function(i, element){
           url_archivo = "<?php echo base_url() ?>" + element.path
