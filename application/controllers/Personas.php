@@ -163,7 +163,7 @@ class Personas extends CI_Controller {
 	}
 
 	function subir_pdf() {
-		$ruta = 'assets/uploads/personas';
+		$ruta = 'assets/uploads';
 		if (!file_exists($ruta)) {
 			if (!mkdir($ruta, 0777, true)) {
 				$response['status'] = false;
