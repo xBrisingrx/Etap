@@ -47,7 +47,7 @@
                 <td><?php echo $p->dni;?></td>
                 <td>
                   <?php if ($p->dni_pdf_path != 'falta_pdf'): ?>
-                    <a href="<?php echo base_url('assets/uploads/personas/').$p->dni_pdf_path;?>"
+                    <a href="<?php echo base_url('assets/uploads/').$p->dni_pdf_path;?>"
                       target="_blank" class="text-center">
                       <i class="fa fa-file-pdf-o fa-2x"></i>
                     </a>
@@ -70,7 +70,7 @@
                 <td><?php echo $p->cuil;?></td>
                 <td>
                   <?php if ($p->cuil_pdf_path != 'falta_pdf'): ?>
-                    <a href="<?php echo base_url('assets/uploads/personas/').$p->cuil_pdf_path;?>"
+                    <a href="<?php echo base_url('assets/uploads/').$p->cuil_pdf_path;?>"
                       target="_blank" class="text-center">
                       <i class="fa fa-file-pdf-o fa-2x"></i>
                     </a>
@@ -86,7 +86,7 @@
                 <td><?php echo date('d-m-Y', strtotime($p->fecha_nacimiento));?></td>
                 <td>
                   <?php if ($p->alta_pdf_path != 'falta_pdf'): ?>
-                    <a href="<?php echo base_url('assets/uploads/personas/').$p->alta_pdf_path;?>"
+                    <a href="<?php echo base_url('assets/uploads/').$p->alta_pdf_path;?>"
                       target="_blank" class="text-center">
                       <i class="fa fa-file-pdf-o fa-2x"></i>
                     </a>
