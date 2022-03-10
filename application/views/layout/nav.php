@@ -4,13 +4,16 @@
       <div class="u-header__section g-brd-bottom g-brd-gray-light-v4 g-bg-black g-transition-0_3">
         <div class="container">
           <div class="row justify-content-between align-items-center g-mx-0--lg">
-
             <div class="col-sm-auto g-pos-rel g-py-8">
-
+              <?php if (!empty($this->session->userdata('nombre'))): ?>
+                <div class="text-white">
+                  Usuario activo: <?php echo $this->session->userdata('nombre') ?>
+                </div>
+              <?php endif ?>
             </div>
 
             <div class="col-sm-auto g-pr-15 g-pr-0--sm">
-              <a href="<?php echo base_url('Login/logout'); ?>" class="btn btn-sm btn-info">Cerrar sesion</a>
+              <a href="<?php echo base_url('Login/logout'); ?>" class="btn btn-sm btn-info my-1">Cerrar sesion</a>
             </div>
           </div>
         </div>
