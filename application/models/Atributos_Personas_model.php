@@ -50,6 +50,14 @@ class Atributos_Personas_model extends CI_Model {
     return $this->db->get()->result();
   }
 
+  function get_ultima_renovacion($atributo_persona_id){ // obtengo la ultima renovacion de este atributo
+    return $this->db->select('id')
+                      ->from('renovaciones_atributos')
+                        ->where('atributo_persona_id', $atributo_persona_id)
+                          ->order_by('fecha_vencimiento', 'DESC')
+                            ->get()->row();
+  }
+
   // Consultamos si un registro ya existe
   function existe( $persona_id,$atributo_id ) {
     $query = $this->db->get_where(

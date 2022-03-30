@@ -70,6 +70,14 @@ class Atributos_Vehiculos_model extends CI_Model {
     }
   }
 
+  function get_ultima_renovacion($atributo_vehiculo_id){ // obtengo la ultima renovacion de este atributo
+    return $this->db->select('id')
+                      ->from('renovaciones_atributos_vehiculos')
+                        ->where('atributo_vehiculo_id', $atributo_vehiculo_id)
+                          ->order_by('fecha_vencimiento', 'DESC')
+                            ->get()->row();
+  }
+
   // Nos llega un array con los atributos asociados al perfil que se le carga a un vehiculo
   // Cargado por defecto en FALSE, eso se carga en Documentos
   // fecha_vencimiento y pdf_path son campos que se cargan en documentos

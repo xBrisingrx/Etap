@@ -74,6 +74,8 @@ class Documentos extends CI_Controller {
       // Acomodo el array que va a ir a la tabla de atributos
       foreach ($atributos as $attr) {
         $row = array();
+        // Obtenemos la renovacion con vencimiento mas lejano
+        $renovacion = $this->$model->get_ultima_renovacion($attr->id);
         $class_btn_cargar = ($attr->cargado) ? 'btn u-btn-orange btn-xs' : 'btn u-btn-indigo btn-xs' ;
         $icon = ($attr->cargado) ? 'fa fa-edit' : 'fa fa-plus';
         $row[] = $attr->nombre;
@@ -81,7 +83,11 @@ class Documentos extends CI_Controller {
         $row[] = ($attr->tiene_vencimiento) ? 'Si' : 'No';
         $row[] = ($attr->cargado && $attr->tiene_vencimiento) ? date('d-m-Y', strtotime($attr->fecha_vencimiento)) : ' ';
         $row[] = ($attr->permite_pdf) ? 'Si' : 'No';
-        $row[] = '';
+        if (isset($renovacion->id)) {
+          $row[] = '<button class="btn btn-sm u-btn-purple g-mr-5 g-mb-5" title="Ver archivos" onclick="modal_archivos('."'".$tipo."',".$renovacion->id.')" ><i class="fa fa-file"></i></button>';
+        } else {
+          $row[] = '';
+        }
         $row[] = '<button class="'.$class_btn_cargar.'" title="Cargar documentacion" onclick="modal_cargar_atributo('."'".$attr->id."'".')" ><i class="'.$icon.'"></i></button></button> <button class="btn u-btn-red btn-xs ml-2" title="Eliminar" onclick="modal_eliminar_atributo('."'".$attr->id."'".')" ><i class="fa fa-trash"></i></button>';
         $row[] = $attr->cargado;
         $row[] = $attr->id;
@@ -135,11 +141,12 @@ class Documentos extends CI_Controller {
     $tabla = ($tipo == 1) ? 'renovaciones_atributos' : 'renovaciones_atributos_vehiculos';
     $model = ($tipo == 1) ? 'Renovaciones_Atributos_model' : 'Renovaciones_Atributos_Vehiculo_model';
     $atributo_tipo_id = ($tipo == 1) ? 'atributo_persona_id' : 'atributo_vehiculo_id';
-    $this->_validate_rules( $this->input->post('vence'), $tipo );
+    $this->_validate_rules( $this->input->post('vence') );
     if ( $this->form_validation->run() == FALSE ) {
         echo json_encode( array( 'status' => 'error', 
                                  'msg' => validation_errors(), 
-                                 'errors' => validation_errors() ) );
+                                 'errors' => validation_errors(),
+                                 'attr' => $this->input->post('vence') ) );
     } else {
       $atributo = array(
         $atributo_tipo_id => $this->input->post('atributo_data_id'),
@@ -199,7 +206,7 @@ class Documentos extends CI_Controller {
     $tabla = ($tipo == 1) ? 'renovaciones_atributos' : 'renovaciones_atributos_vehiculos';
     $model = ($tipo == 1) ? 'Renovaciones_Atributos_model' : 'Renovaciones_Atributos_Vehiculo_model';
     $atributo_tipo_id = ($tipo == 1) ? 'atributo_persona_id' : 'atributo_vehiculo_id';
-    $this->_validate_rules( $this->input->post('vence'), $tipo, TRUE );
+    $this->_validate_rules( $this->input->post('vence'), TRUE );
     if ( $this->form_validation->run() == FALSE ) {
         echo json_encode( array( 'status' => 'error', 
                                  'msg' => validation_errors(), 
@@ -249,7 +256,7 @@ class Documentos extends CI_Controller {
     }
   }
 
-  function _validate_rules($vence, $tipo, $edit = false) {
+  function _validate_rules($vence, $edit = false) {
     if ($vence == 'Si') {
       $this->form_validation->set_rules('fecha_renovacion', 'fecha renovacion', 'required|callback_valid_date');
       $this->form_validation->set_rules('fecha_vencimiento', 'fecha vencimiento', 'required|callback_valid_date');
