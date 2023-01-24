@@ -260,7 +260,7 @@ class Informes extends CI_Controller {
     $atributos = $this->Atributo_model->get_nombre_id( 2, $atributo_ids );
 
     foreach ($atributos as $atributo) {
-      $cuerpo_array[$atributo->id] = "---";
+      $cuerpo_array[$atributo->id] = "No corresponde";
     }
     $row = $cuerpo_array;
     $row['interno'] = 'No hay informacion para mostrar';
@@ -272,6 +272,7 @@ class Informes extends CI_Controller {
       } elseif ( $id_anterior != $data[$i]->id ) {
         $datos_informe[] = $row;
         $id_anterior = $data[$i]->id;
+        $row = $cuerpo_array;
         $row['interno'] = $data[$i]->interno;
         $row = $this->obtener_fecha_vencimiento($row, $data[$i]);
       } else {
@@ -294,7 +295,7 @@ class Informes extends CI_Controller {
     $atributos = $this->Atributo_model->get_nombre_id(1, $atributo_ids);
 
     foreach ($atributos as $atributo) {
-      $cuerpo_array[$atributo->id] = "---";
+      $cuerpo_array[$atributo->id] = "No corresponde";
     }
     $row = $cuerpo_array;
     $row['legajo'] = 'No hay informacion para mostrar';
@@ -307,6 +308,7 @@ class Informes extends CI_Controller {
       } elseif ( $id_anterior != $data[$i]->id ) {
         $datos_informe[] = $row;
         $id_anterior = $data[$i]->id;
+        $row = $cuerpo_array;
         $row['legajo'] = $data[$i]->n_legajo;
         $row['nombre_completo'] = $data[$i]->apellido_persona.' '.$data[$i]->nombre_persona.' '.$data[$i]->dni;
         $row = $this->obtener_fecha_vencimiento($row, $data[$i]);
