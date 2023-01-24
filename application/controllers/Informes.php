@@ -185,19 +185,23 @@ class Informes extends CI_Controller {
     $this->Informe_matriz_vehiculos($fecha_inicio, $fecha_fin, $atributo_id);
   }
 
-  function informe_matriz( ) {
+  function informe_matriz( $tiene_vencimiento = true ) {
     // aca me puede venir ningun, uno o muchos ids de atributos
     $atributo_ids = (  isset($_GET['atributo_id']) ) ? $_GET['atributo_id'] : null;
     $fecha_inicio = ( $this->input->get('fecha_inicio') != '' ) ? $this->input->get('fecha_inicio') : null;
     $fecha_fin = ( $this->input->get('fecha_fin') != '' ) ? $this->input->get('fecha_fin') : null;
-
-    $titulo_excel = 'Informe vencimientos de personal';
+    
+    if ($tiene_vencimiento != 'false') {
+      $titulo_excel = 'Informe vencimientos de personal';
+    } else {
+      $titulo_excel = 'Informe atributos sin vencimiento de personal';
+    }
     // Columnas que aparecen en el excel
     $titulo_columna = array('LEGAJO', 'APELLIDO/S, NOMBRE/S (DNI)');
     // De indice uso el ID del atributo
     $nombres_indices = array( 'legajo', 'nombre_completo');
 
-    $atributos = $this->Atributo_model->get_nombre_id(1, $atributo_ids);
+    $atributos = $this->Atributo_model->get_nombre_atributos_con_vencimiento(1, $atributo_ids, $tiene_vencimiento);
 
     if ($fecha_inicio != null && $fecha_fin != null) {
       $desde = date('d/m/Y', strtotime($fecha_inicio));
@@ -212,7 +216,7 @@ class Informes extends CI_Controller {
     $numero_columnas = count($nombres_indices);
 
     $this->generar_excel(
-          $this->atributos_personas($fecha_inicio, $fecha_fin, $atributo_ids),
+          $this->atributos_personas($fecha_inicio, $fecha_fin, $atributo_ids, $tiene_vencimiento),
           'K', $numero_columnas,  $titulo_excel,'Informe_matriz',
           $titulo_columna, $nombres_indices, 'C' , 'informe_matriz_personal'
     );
@@ -284,15 +288,15 @@ class Informes extends CI_Controller {
     return $datos_informe;
   }
 
-  function atributos_personas( $fecha_inicio = null, $fecha_fin = null, $atributo_ids = null) {
+  function atributos_personas( $fecha_inicio = null, $fecha_fin = null, $atributo_ids = null, $tiene_vencimiento = true) {
     // array con la informacion a mostrar en el excel
     $datos_informe = array();
     // array base de indices
     $cuerpo_array = array( 'legajo' => '', 'nombre_completo' => '');
     // info de los vencimientos de cada persona
-    $data = $this->Atributos_Personas_model->informe_matriz( $fecha_inicio, $fecha_fin, $atributo_ids );
+    $data = $this->Atributos_Personas_model->informe_matriz( $fecha_inicio, $fecha_fin, $atributo_ids, $tiene_vencimiento);
 
-    $atributos = $this->Atributo_model->get_nombre_id(1, $atributo_ids);
+    $atributos = $this->Atributo_model->get_nombre_atributos_con_vencimiento(1, $atributo_ids, $tiene_vencimiento);
 
     foreach ($atributos as $atributo) {
       $cuerpo_array[$atributo->id] = "No corresponde";

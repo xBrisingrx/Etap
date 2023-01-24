@@ -199,7 +199,7 @@ class Atributos_Personas_model extends CI_Model {
   }
 
   // Consultas para informes
-  function informe_matriz($fecha_inicio = null, $fecha_fin = null, $atributo_ids = null) {
+  function informe_matriz($fecha_inicio = null, $fecha_fin = null, $atributo_ids = null, $tiene_vencimiento = true) {
     $this->db->select('personas.id,personas.n_legajo, personas.nombre as nombre_persona, personas.apellido as apellido_persona, personas.dni,
                        atributos.nombre as nombre_atributo,
                        atributos_personas.fecha_vencimiento, atributos_personas.cargado, atributos.tiene_vencimiento,atributos.id as atributo_id')
@@ -207,6 +207,8 @@ class Atributos_Personas_model extends CI_Model {
                   ->join('personas', 'personas.id = atributos_personas.persona_id')
                     ->join('atributos', 'atributos.id = atributos_personas.atributo_id')
                       ->where('atributos_personas.activo', TRUE)
+                      ->where('atributos.tiene_vencimiento', $tiene_vencimiento)
+                      ->where('atributos.activo', TRUE)
                       ->where('personas.activo', TRUE);
 
     if ($fecha_inicio != null && $fecha_fin != null) {
