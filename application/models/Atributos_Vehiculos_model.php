@@ -187,15 +187,16 @@ class Atributos_Vehiculos_model extends CI_Model {
   }
 
   // Consultas para informes
-  function informe_matriz($fecha_inicio, $fecha_fin, $atributo_ids) {
+  function informe_matriz($fecha_inicio = null, $fecha_fin = null, $atributo_ids = null) {
     $this->db->select('vehiculos.id, vehiculos.interno as interno,
                        atributos.nombre as nombre_atributo,
-                       atributos_vehiculos.fecha_vencimiento, atributos_vehiculos.cargado, atributos.tiene_vencimiento, atributos.id as atributo_id')
+                       atributos_vehiculos.fecha_vencimiento, atributos_vehiculos.cargado, atributos.tiene_vencimiento, atributos.id as atributo_id, atributos_vehiculos.activo')
                 ->from('atributos_vehiculos')
                   ->join('vehiculos', 'vehiculos.id = atributos_vehiculos.vehiculo_id')
                     ->join('atributos', 'atributos.id = atributos_vehiculos.atributo_id')
-                      ->where('atributos_vehiculos.activo', TRUE)
-                      ->where('vehiculos.activo', TRUE);
+                    ->where('atributos.tiene_vencimiento', TRUE)
+                      ->where('vehiculos.activo', TRUE)
+                      ->where('atributos_vehiculos.activo', TRUE);
 
   if ($fecha_inicio != null && $fecha_fin != null) {
       $this->db->where('atributos_vehiculos.fecha_vencimiento >=', $fecha_inicio );
@@ -203,13 +204,10 @@ class Atributos_Vehiculos_model extends CI_Model {
     }
 
     if ( $atributo_ids != null ) {
-      $this->db->where('atributos_vehiculos.atributo_id', $atributo_ids[0]);
-      for ($i=1; $i < count($atributo_ids) ; $i++) { 
-        $this->db->or_where('atributos_vehiculos.atributo_id = ', $atributo_ids[$i]);
-      }
+      $this->db->where_in('atributos_vehiculos.atributo_id', $atributo_ids);
     }
 
-    $this->db->order_by('vehiculos.id', 'ASC');
+    $this->db->order_by('vehiculos.interno', 'ASC');
     $this->db->order_by('atributos.nombre', 'ASC');
     return $this->db->get()->result();
   }

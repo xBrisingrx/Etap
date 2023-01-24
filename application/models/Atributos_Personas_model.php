@@ -203,7 +203,7 @@ class Atributos_Personas_model extends CI_Model {
     $this->db->select('personas.id,personas.n_legajo, personas.nombre as nombre_persona, personas.apellido as apellido_persona, personas.dni,
                        atributos.nombre as nombre_atributo,
                        atributos_personas.fecha_vencimiento, atributos_personas.cargado, atributos.tiene_vencimiento,atributos.id as atributo_id')
-                ->from('atributos_personas')
+                ->from($this->table)
                   ->join('personas', 'personas.id = atributos_personas.persona_id')
                     ->join('atributos', 'atributos.id = atributos_personas.atributo_id')
                       ->where('atributos_personas.activo', TRUE)
@@ -215,13 +215,11 @@ class Atributos_Personas_model extends CI_Model {
     }
 
     if ( $atributo_ids != null ) {
-      $this->db->where('atributos_personas.atributo_id', $atributo_ids[0]);
-      for ($i=1; $i < count($atributo_ids) ; $i++) { 
-        $this->db->or_where('atributos_personas.atributo_id = ', $atributo_ids[$i]);
-      }
+      $this->db->where_in("$this->table.atributo_id", $atributo_ids);
     }
 
-    $this->db->order_by('personas.id', 'ASC');
+    $this->db->order_by('personas.apellido', 'ASC');
+    $this->db->order_by('personas.nombre', 'ASC');
     $this->db->order_by('atributos.nombre', 'ASC');
     return $this->db->get()->result();
   }
