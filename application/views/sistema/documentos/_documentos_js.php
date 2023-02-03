@@ -49,6 +49,8 @@
 	function save() {
 		let nombre_label_attr = $('#nombre_attr').val()
     let cargar_atributo = `${base_url}Documentos/cargar_atributo/${tipo}`
+    let test_data = constructor_form()
+    console.log(document.getElementById('id_atributo_tipo').value)
     fetch(cargar_atributo, {
       method: "POST",
       body: constructor_form()
@@ -186,7 +188,11 @@
       }
     })
   })
-
+  /* Aseguradoras */
+  function modal_destroy_aseguradora(){
+    $('#modal_eliminar_seguro').modal('show')
+  }
+  /* end aseguradoras*/
   /* Archivos */
   function modal_archivos( tipo, registro_id, tabla = null ) {
     let url_archivo

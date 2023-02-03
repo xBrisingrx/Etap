@@ -187,15 +187,16 @@ class Atributos_Vehiculos_model extends CI_Model {
   }
 
   // Consultas para informes
-  function informe_matriz($fecha_inicio = null, $fecha_fin = null, $atributo_ids = null) {
+  function informe_matriz($fecha_inicio = null, $fecha_fin = null, $atributo_ids = null, $tiene_vencimiento = true) {
     $this->db->select('vehiculos.id, vehiculos.interno as interno,
                        atributos.nombre as nombre_atributo,
                        atributos_vehiculos.fecha_vencimiento, atributos_vehiculos.cargado, atributos.tiene_vencimiento, atributos.id as atributo_id, atributos_vehiculos.activo')
                 ->from('atributos_vehiculos')
                   ->join('vehiculos', 'vehiculos.id = atributos_vehiculos.vehiculo_id')
                     ->join('atributos', 'atributos.id = atributos_vehiculos.atributo_id')
-                    ->where('atributos.tiene_vencimiento', TRUE)
+                    ->where('atributos.tiene_vencimiento', $tiene_vencimiento)
                       ->where('vehiculos.activo', TRUE)
+                      ->where('atributos.activo', TRUE)
                       ->where('atributos_vehiculos.activo', TRUE);
 
   if ($fecha_inicio != null && $fecha_fin != null) {

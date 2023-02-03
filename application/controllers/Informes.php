@@ -109,15 +109,14 @@ class Informes extends CI_Controller {
       $sheet->getStyle("A2:".$letra_fin.'2')->getBorders()->applyFromArray( $styleArray );
 
       //Definimos la data del cuerpo.
-      foreach($data as $d)
-      {
+      foreach($data as $d) {
         $letra = 'A';
          //Incrementamos una fila más, para ir a la siguiente.
          $contador++;
          //Informacion de las filas de la consulta.
         foreach ($nombres_indices as $indice) {
           $sheet->setCellValue($letra."{$contador}", $d[$indice]);
-          if ( $letra >= $col_colores ) {
+          if ( $letra >= $col_colores || strlen($letra) > 1 ) {
             $sheet->getStyle($letra."{$contador}")->getFill()->applyFromArray($this->estilo_celda($d[ $indice ]));
           }
 
@@ -222,17 +221,21 @@ class Informes extends CI_Controller {
     );
   }
 
-  function informe_matriz_vehiculos( ) {
+  function informe_matriz_vehiculos( $tiene_vencimiento = true ) {
     $atributo_ids = (  isset($_GET['atributo_id']) ) ? $_GET['atributo_id'] : 0;
     $fecha_inicio = ( $this->input->get('fecha_inicio') != '' ) ? $this->input->get('fecha_inicio') : null;
     $fecha_fin = ( $this->input->get('fecha_fin') != '' ) ? $this->input->get('fecha_fin') : null;
     
-    $titulo_excel = 'Informe vencimientos de vehiculos';
+    if ($tiene_vencimiento != 'false') {
+      $titulo_excel = 'Informe vencimientos de vehiculos';
+    } else {
+      $titulo_excel = 'Informe atributos sin vencimiento de vehiculos';
+    }
     $titulo_columna = array('INTERNO');
     // Nombre de attr que uso para indices
     $nombres_indices = array( 'interno');
 
-    $atributos = $this->Atributo_model->get_nombre_id(2, $atributo_ids);
+    $atributos = $this->Atributo_model->get_nombre_atributos_con_vencimiento(2, $atributo_ids, $tiene_vencimiento);
 
     if ($fecha_inicio != null && $fecha_fin != null) {
       $desde = date('d/m/Y', strtotime($fecha_inicio));
@@ -245,23 +248,21 @@ class Informes extends CI_Controller {
       array_push($nombres_indices, $atributo->id);
     }
     $numero_columnas = count($nombres_indices);
-
+    $la_letra = ('B' > 'AA');
     $this->generar_excel(
-          $this->atributos_vehiculos($fecha_inicio, $fecha_fin, $atributo_ids),
+          $this->atributos_vehiculos($atributos,$fecha_inicio, $fecha_fin, $atributo_ids, $tiene_vencimiento),
           'K', $numero_columnas,  $titulo_excel,'Informe_matriz',
           $titulo_columna, $nombres_indices, 'B' , 'informe_matriz_vehiculos'
     );
   }
 
-  function atributos_vehiculos($fecha_inicio = null, $fecha_fin = null, $atributo_ids = null) {
+  function atributos_vehiculos($atributos, $fecha_inicio = null, $fecha_fin = null, $atributo_ids = null, $tiene_vencimiento = true) {
     // array con la informacion a mostrar en el excel
     $datos_informe = array();
     // array base de indices
     $cuerpo_array = array( 'interno' => '');
 
-    $data = $this->Atributos_Vehiculos_model->informe_matriz( $fecha_inicio, $fecha_fin, $atributo_ids );
-
-    $atributos = $this->Atributo_model->get_nombre_id( 2, $atributo_ids );
+    $data = $this->Atributos_Vehiculos_model->informe_matriz( $fecha_inicio, $fecha_fin, $atributo_ids, $tiene_vencimiento );
 
     foreach ($atributos as $atributo) {
       $cuerpo_array[$atributo->id] = "No corresponde";
@@ -336,15 +337,6 @@ class Informes extends CI_Controller {
     }
     $array[$data->atributo_id] = $dato;
     return $array;
-  }
-
-  function test_informe(){
-    $fecha_inicio = '2021-09-01';
-    $fecha_fin = '2021-09-30';
-    $atributos_ids = array(33);
-    $info = $this->Atributos_Vehiculos_model->informe_matriz( $fecha_inicio, $fecha_fin, $atributos_ids );
-    $str = $this->db->last_query();
-    echo json_encode($str);
   }
 
   function listado_personas() {
