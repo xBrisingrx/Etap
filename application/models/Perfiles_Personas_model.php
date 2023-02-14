@@ -12,7 +12,7 @@ class Perfiles_Personas_model extends CI_Model {
   function get($attr = null, $valor = null) {
     $this->db->select('perfiles_personas.id, perfiles_personas.persona_id, perfiles_personas.perfil_id,
                                personas.nombre as nombre_persona, personas.apellido as apellido_persona,
-                               perfiles.nombre as nombre_perfil, perfiles_personas.fecha_inicio_vigencia')
+                               perfiles.nombre as nombre_perfil, perfiles_personas.fecha_inicio_vigencia, personas.dni, personas.cuil, perfiles_personas.activo')
                           ->from('perfiles_personas')
                             ->join('personas', 'personas.id = perfiles_personas.persona_id')
                             ->join('perfiles', 'perfiles.id = perfiles_personas.perfil_id')

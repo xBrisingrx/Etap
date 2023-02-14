@@ -118,7 +118,6 @@
 <!-- Fin modal eliminar asignacion -->
 
 <script>
-	let rol_usuario = <?php echo $this->session->userdata('rol');?>;
 	let profile_assign_table
 	let save_method
 	let asign_type = '<?php echo $tipo_perfil;?>'
