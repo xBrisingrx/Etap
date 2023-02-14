@@ -37,7 +37,7 @@ class DButil_model extends CI_Model {
     if (!empty($data->pdf_path) && file_exists("$carpeta/$data->pdf_path") ) {
       return "$carpeta/$data->pdf_path";
     } else {
-      return "$carpeta/$data->pdf_path";
+      return "";
     }
   }
 
